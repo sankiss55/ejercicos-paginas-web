@@ -31,10 +31,10 @@ h4{
     border-radius: 5px;
     width: max-content;
 }
-h2{
+h3{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
-h2:hover{
+h3:hover{
     cursor: pointer;
     color:hsl(47, 88%, 63%) ;
 }
