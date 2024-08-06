@@ -1,0 +1,125 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-size: 13px;
+}
+
+html, body {
+    background-color: hsl(210, 46%, 95%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: minmax(1px, 100%);
+    gap: 10px;
+    max-width: 1440px;
+    width: 80%;
+}
+
+#item1 {
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: repeat(2, 2fr);
+    grid-template-rows: minmax(1px, auto);
+    gap: 10px;
+}
+
+#contenedor1 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 2fr 1fr;
+}
+#contenedor1 div:not(.infousuario){
+    padding: 15px;
+}
+#contenedor2 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr 2fr;
+}
+#contenedor2 div:not(.infousuario){
+    padding: 15px;
+}
+/* Formación de colores de los componentes */
+#item2 {
+    background-color: hsl(0, 0%, 100%);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+#submodulo1 {
+    background-color: hsl(263, 55%, 52%);
+    background-image: url("../image/bg-pattern-quotation.svg");
+    background-repeat: no-repeat;
+    background-position: 80% 0%;
+    color: white;
+}
+
+#submodulo2 {
+    background-color: hsl(217, 19%, 35%);
+    color: white;
+}
+
+#submodulo4 {
+    background-color: hsl(219, 29%, 14%);
+    color: white;
+}
+
+#submodulo3 {
+    background-color: hsl(0, 0%, 100%);
+}
+
+strong, h4 {
+    font-family: "Barlow Semi Condensed", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+}
+
+strong {
+    font-size: 19px;
+}
+
+p, b {
+    font-family: "Barlow Semi Condensed", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    opacity: 0.5;
+}
+
+img {
+    border-radius: 50%;
+}
+#submodulo1 img{
+    border: 3px solid rgba(225, 225, 225, 0.5);
+}#submodulo4 img{
+    border: 3px solid rgb(151, 26, 230,0.5);
+}
+.infousuario {
+    height: 50px;
+    position: relative;
+    display: flex;
+}
+
+.infousuario img {
+    height: 100%;
+}
+
+#item1 div, #item2 div {
+    border-radius: 10px;
+}
+@media( max-width: 500px){
+main{
+    grid-template-columns: 1fr ;
+}
+#contenedor1,#contenedor2{
+    
+    grid-template-columns: 1fr ;
+}
+}
