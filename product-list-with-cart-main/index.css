@@ -167,3 +167,11 @@ p{
     opacity: 0.4;
   font-weight: 200;
 }
+@media(max-width :400px){
+#seccion1,main{
+    grid-template-columns: 1fr;
+}
+#seccion1 h1{
+    grid-column: 1/2;
+}
+}
