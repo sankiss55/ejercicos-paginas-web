@@ -1,0 +1,169 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+html, body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: hsl(20, 50%, 98%);
+  font-family: "Young Serif", serif;
+  font-style: normal;
+  font-size: 16px;
+}
+main{
+    width: 80%;
+    height: 95vh;
+    gap: 10px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+#seccion1{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: max-content;
+    gap: 10px;
+}
+#Desserts{
+    grid-column: 1/4;
+}
+#seccion1 img{
+    width: 100%;
+    height: 40%;
+    border-radius: 10px;
+}
+#seccion2{
+    background-color:white;
+    height: max-content;
+    border-radius: 10px;
+    padding: 10px;
+    
+}
+#seccion2 img, #seccion2 h5{
+margin-left: 50%;
+transform: translate(-50%);
+}
+.productosactivos{
+    height: max-content;
+}
+button{
+    cursor: pointer;
+}
+.agregarproducto {
+    display: flex;
+    width: 70%;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    margin-left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 20px;
+    border: solid black 1px;
+  font-family: "Young Serif", serif;
+  font-style: normal;
+  font-weight: 400;
+  transition: 0.5s ease all;
+  position: relative;
+}
+.reducir_aumentar_cantidad button{
+    width: 30%;
+    border-radius: 50%;
+    position: relative;
+    background-color: transparent;
+    border: 2px solid rgba(225, 225, 225, 0.5);
+    font-size: 100%;
+    color: white;
+
+}
+
+.reducir_aumentar_cantidad p{
+    opacity: 1;
+}
+.reducir_aumentar_cantidad {
+display: flex;
+    color: white;
+gap: 20%;
+}
+.agregarproducto:hover,.agregarproducto:focus {
+    transition: 0.5s ease all;
+    background-color: rgb(252, 236, 223);
+    width: 80%;
+}
+.productosapartados{
+display: flex;
+flex-direction: column;
+position: relative;
+margin-top: 20px;
+}
+.productosapartados p *{
+   margin-right: 10px;
+}
+
+.productosapartados button {
+    position: absolute;
+    border-radius: 50%;
+    width: 5%;
+    border: 1px solid grey;
+    background-color: transparent;
+    left: 100% ;
+    top: 50%;
+    transform: translate(-100%,-50%);
+}
+#pagototal div{
+    flex-direction: row;
+display: flex;
+gap: 50%;
+}
+
+#pagototal aside{
+    padding: 10px 15px 10px 15px;
+    width: 90%;
+    margin-left: 50%;
+    text-align: center;
+    transform: translate(-50%);
+    background-color:rgb(252, 236, 223) ;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#pagototal aside img{
+    margin-left: 0;
+}
+#pagototal button{
+    background-color: hsl(14, 86%, 42%);
+    color: white;
+    text-align: center;
+    margin-left: 50%;
+    transform: translate(-50%);
+    width:80%;
+    border-radius: 50px;
+    border: none;
+    padding: 10px;
+    transition: 1s ease all ;
+}
+#pagototal button:hover{
+    transition: 1s ease all ;
+    background-color: hsl(159, 69%, 38%);
+}
+#pagototal{
+    margin-top: 20px;
+}
+#seccion2 h3, strong{
+    color:  hsl(14, 86%, 42%);
+}
+h1{
+
+  font-weight: 700;
+}
+b{
+    
+  font-weight: 600;
+}
+p{
+    opacity: 0.4;
+  font-weight: 200;
+}
