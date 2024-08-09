@@ -5,7 +5,7 @@ axios.get("data.json").then(function(respuesta){
     for (const resultado of respuesta.data) {
         let elementonuevo=document.createElement("div");
         elementonuevo.className="productosactivos";
-        elementonuevo.innerHTML=`<img src="${resultado.image.desktop}" alt="${resultado.image.desktop}"><button id="producto-${resultado.name}" class=agregarproducto><img src=assets/images/icon-add-to-cart.svg alt="icon-add-to-cart.svg" style="width:20%;">add to Cart</button><p>${resultado.category}</p><b>${resultado.name}</b><br><strong>$${resultado.price}.00</strong>`;
+        elementonuevo.innerHTML=`<img src="${resultado.image.desktop}" alt="${resultado.image.desktop}"><button id="producto-${resultado.name}" class=agregarproducto><img src=assets/images/icon-add-to-cart.svg alt="icon-add-to-cart.svg" style="width:20%;">add to Cart</button><p>${resultado.category}</p><b>${resultado.name}</b><br><strong>$${resultado.price}</strong>`;
         let seccion1=document.getElementById("seccion1");
         seccion1.appendChild(elementonuevo);
         document.getElementById(`producto-${resultado.name}`).addEventListener("click", function(){
@@ -52,7 +52,7 @@ if(array_productos_apartados_div[i]==nombre){
             let productosapartados=document.createElement("div");
             productosapartados.className="productosapartados";
             productosapartados.id=nombre;
-            productosapartados.innerHTML=`<b class="nombre_producto_apartado">${nombre}</b> <p id="informacion_precio_${nombre}"><strong class="cantidad_del_producto">x1</strong> <P class="precio_unitario"> @$${precio}<p><span  class="precio_total_producto"> $${precio}<span></p><button value=0 id="quitar-producto-${nombre}"><img src="assets/images/icon-remove-item.svg"></button><hr>`;
+            productosapartados.innerHTML=`<b class="nombre_producto_apartado">${nombre}</b> <p id="informacion_precio_${nombre}"><strong class="cantidad_del_producto">x1</strong> <span class="precio_unitarios"> @$${precio}</span><span  class="precio_total_producto"> $${precio}</span></p><button value=0 id="quitar-producto-${nombre}"><img src="assets/images/icon-remove-item.svg"></button><hr>`;
             var productos_apartadoshtml=document.getElementById("productos_apartados");
             productos_apartadoshtml.appendChild(productosapartados);
             document.getElementById(`quitar-producto-${nombre}`).addEventListener("click",function(){
@@ -103,35 +103,46 @@ if(document.getElementById("productos_apartados").children.length==0)
             hay_o_noproductos("none", "block")):(0) );
          cantidad_incremento_producto.innerHTML=respuesta>0?respuesta:0;
         let info_parrafo_producto_apartado=parseInt(boton_incrementar.parentElement.querySelector("p").textContent);
-        document.getElementById(id_info_precio_producto_aprtado).innerHTML=`<strong class="cantidad_del_producto">x`+info_parrafo_producto_apartado+`</strong> <p class="precio_unitario">@$${precio_c_u}<p><span class="precio_total_producto">$${precio_c_u*info_parrafo_producto_apartado} </span>`;
+        document.getElementById(id_info_precio_producto_aprtado).innerHTML=`<strong class="cantidad_del_producto">x`+info_parrafo_producto_apartado+`</strong> <span class="precio_unitarios">@$${precio_c_u}</span><span class="precio_total_producto">$${precio_c_u*info_parrafo_producto_apartado} </span>`;
      }
      function finalizar_compra(){
         var div_pago = document.createElement("div");
         div_pago.id = "div_pago_final";
-        div_pago.innerHTML = `<img src="assets/images/icon-order-confirmed.svg" ><h1>Orden Confimed</h1><p>We open you enjoy your food!</p><div id="productosadquiridos"></div><button>Start New Orden </button>`;
+        div_pago.innerHTML = `<img src="assets/images/icon-order-confirmed.svg" ><h1>Orden Confimed</h1><p>We open you enjoy your food!</p><div id="productosadquiridos"></div><button id="reiniciar_programa">Start New Orden </button>`;
+        
         document.body.appendChild(div_pago);
         
+        document.getElementById("reiniciar_programa").addEventListener("click", function(){
+            window.location.reload();
+                    });
         var main = document.querySelector("main");
         main.style.opacity = "0.3";
         let productos_adquiridos=document.getElementById("productosadquiridos");
         let todos_los_productos_apartados=document.getElementsByClassName("productosapartados");
         let nombre_producto_apartado=document.getElementsByClassName("nombre_producto_apartado");
         let cantidad_del_producto=document.getElementsByClassName("cantidad_del_producto");
-        let precio_unitario=document.getElementsByClassName("precio_unitario");
+        let precio_unitario=document.getElementsByClassName("precio_unitarios");
         let precio_total_producto=document.getElementsByClassName("precio_total_producto");
         for(let i=0;i<nombre_producto_apartado.length;i++){
-            const div=document.createElement("div");
-            div.innerHTML="div";
-            productos_adquiridos.innerHTML=productos_adquiridos.innerHTML+precio_total_producto[i].textContent;
+            let img="";
+            axios.get("data.json").then(function(respuesta){
+for (const element of respuesta.data) {
+    if(nombre_producto_apartado[i].textContent==element.name){
+         img=element.image.thumbnail;
+         break;
+    }
+}
+const div=document.createElement("div");
+div.classList.add("divs_productos_compra_final");
+div.innerHTML=`<div><img src="${img}"></div><div>${nombre_producto_apartado[i].textContent}<span>${cantidad_del_producto[i].textContent}<p>${precio_unitario[i].textContent}</p></span></div><div>${precio_total_producto[i].textContent}</div>`;
+productos_adquiridos.appendChild(div);
+            }).catch(function(error){
+console.log(error);
+            });
+           
+           
         }
-        /*<b class="nombre_producto_apartado">${nombre}</b> <p id="informacion_precio_${nombre}"><strong class="cantidad_del_producto">x1</strong> <P class="precio_unitario"> @$${precio}<p><span  class="precio_total_producto"> $${precio}<span></p><button value=0 id="quitar-producto-${nombre}"><img src="assets/images/icon-remove-item.svg"></button><hr> */
-
+        productos_adquiridos.innerHTML=productos_adquiridos.innerHTML+"<div id=pagos><p>orden total</p> <h1>$"+precio_total+"</h1></div>";
         
-        productos_adquiridos.innerHTML=productos_adquiridos.innerHTML+"<div><p>orden total</p> <h1>"+precio_total+"</h1></div>";
-        document.body.addEventListener("click", function(evento) {
-            if(evento.target == this) {
-                alert("hola");
-            }
-        });
         //style="width:20%;"
     }

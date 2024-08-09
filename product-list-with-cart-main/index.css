@@ -7,7 +7,6 @@ html, body{
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    min-width: 100vh;
     justify-content: center;
     align-items: center;
     background-color: hsl(20, 50%, 98%);
@@ -17,10 +16,11 @@ html, body{
 }
 main{
     width: 80%;
-    height: 95vh;
+    height: max-content;
     gap: 10px;
     display: grid;
     grid-template-columns: 2fr 1fr;
+    padding: 20px;
 }
 #seccion1{
     display: grid;
@@ -46,6 +46,9 @@ main{
 #seccion2 img, #seccion2 h5{
 margin-left: 50%;
 transform: translate(-50%);
+}
+.productosactivos button{
+    background-color: rgb(223, 241, 252);
 }
 .productosactivos{
     height: max-content;
@@ -146,17 +149,24 @@ gap: 50%;
     transition: 1s ease all ;
 }
 #div_pago_final{
-    width: 70%;
+    width: 50%;
     background-color: white;
     border-radius: 10px;
-    height: 70%;
-    position: fixed;
+    height: max-content;
+    position:absolute;
+    padding: 20px;
+    z-index: 999;
+    margin-top: 50%;
+    margin-left: 50%;
+    transform: translate(-50%,-50%);
 }
 #productosadquiridos{
-height: 40%;
+height: 50%;
 background-color: hsl(20, 50%, 98%);
+border-radius: 10px;
 overflow: scroll;
 overflow-x: hidden;overflow-y: hidden;
+padding: 20px;
 }
 
 #productosadquiridos:hover{
@@ -169,6 +179,32 @@ overflow-x: hidden;overflow-y: hidden;
     border: none;
     color: white;
     border-radius: 50px;
+    margin-left: 50%;
+    transform: translate(-50%);
+}
+.divs_productos_compra_final{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    border-bottom: 1px solid rgba(188, 188, 188, 0.8);
+}.divs_productos_compra_final img{
+width: 80%;
+border-radius: 10px;
+}
+.divs_productos_compra_final span{
+    display: flex;
+    gap: 20px;
+    color: brown;
+}
+.divs_productos_compra_final p{
+    color: black;
+}
+.divs_productos_compra_final div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 #pagototal button:hover{
     transition: 1s ease all ;
@@ -180,8 +216,21 @@ overflow-x: hidden;overflow-y: hidden;
 #seccion2 h3, strong{
     color:  hsl(14, 86%, 42%);
 }
-span{
+.precio_total_producto{
     color: hsl(14, 86%, 42%);
+}
+#pagos{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+}
+#pagos h1{
+    display: flex;
+    align-items: end;
+    justify-content: right;
+}
+#reiniciar_programa{
+    margin-top: 15px;
 }
 h1{
 
@@ -199,11 +248,30 @@ p{
     opacity: 0.8;
 }
 
-@media(max-width :400px){
+@media(max-width :700px){
+    #seccion1{
+        grid-template-columns: 1fr 1fr;
+    }
+    #seccion1 h1{
+        grid-column: 1/3;
+    }}
+
+@media(max-width :375px){
 #seccion1,main{
     grid-template-columns: 1fr;
 }
 #seccion1 h1{
     grid-column: 1/2;
 }
+main{
+    width: 50vh;
 }
+#div_pago_final{
+    width: 101%;
+    height: 80%;  
+    position: fixed;
+    top: 25%; /* Mueve la parte superior del contenedor al centro verticalmente */
+    left: 0%; /* Mueve la parte izquierda del contenedor al centro horizontalmente */
+    padding: 20px;
+    border: 1px solid black;
+}}
