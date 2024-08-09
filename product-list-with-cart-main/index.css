@@ -145,6 +145,31 @@ gap: 50%;
     padding: 10px;
     transition: 1s ease all ;
 }
+#div_pago_final{
+    width: 70%;
+    background-color: white;
+    border-radius: 10px;
+    height: 70%;
+    position: fixed;
+}
+#productosadquiridos{
+height: 40%;
+background-color: hsl(20, 50%, 98%);
+overflow: scroll;
+overflow-x: hidden;overflow-y: hidden;
+}
+
+#productosadquiridos:hover{
+    overflow-y: scroll; 
+}
+#div_pago_final button{
+    background-color:  hsl(14, 86%, 42%);
+    width: 90%;
+    padding: 10px;
+    border: none;
+    color: white;
+    border-radius: 50px;
+}
 #pagototal button:hover{
     transition: 1s ease all ;
     background-color: hsl(159, 69%, 38%);
@@ -154,6 +179,9 @@ gap: 50%;
 }
 #seccion2 h3, strong{
     color:  hsl(14, 86%, 42%);
+}
+span{
+    color: hsl(14, 86%, 42%);
 }
 h1{
 
@@ -167,6 +195,10 @@ p{
     opacity: 0.4;
   font-weight: 200;
 }
+.productosapartados p{
+    opacity: 0.8;
+}
+
 @media(max-width :400px){
 #seccion1,main{
     grid-template-columns: 1fr;
