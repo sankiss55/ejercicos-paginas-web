@@ -85,6 +85,9 @@ button, input {
 label{
     position: relative;
 }
+.input_error::placeholder {
+    color: red;
+  }
 .error::after{
     content: "Valid email required";
     color: red;

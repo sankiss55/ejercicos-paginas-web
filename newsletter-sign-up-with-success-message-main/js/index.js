@@ -11,6 +11,7 @@ if(!formato.test(correo)){
     input.style.backgroundColor="rgba(255, 175, 175, 0.8)";
     let label=document.querySelector("label");
     label.classList.add("error");
+    input.classList.add("input_error");
     input.placeholder="ash#loremcompany.com";
     return;
 }
