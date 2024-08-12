@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Big+Shoulders+Display:wght@100..900&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Inter&family=Manrope:wght@200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Red+Hat+Text:wght@300..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&family=Young+Serif&display=swap');
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html, body{
+  min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+font-family: "Big Shoulders Display", sans-serif;
+font-optical-sizing: auto;
+font-style: normal;
+font-weight: 700;
+}
+#SEDANS{
+  background-color: hsl(31, 77%, 52%);
+}
+#SUVS{
+  background-color: hsl(184, 100%, 22%);
+}
+#LUXURY{
+  background-color: hsl(179, 100%, 13%);
+}
+#SEDANSb{
+  color: hsl(31, 77%, 52%);
+}
+#SUVSb{
+  color: hsl(184, 100%, 22%);
+}
+#LUXURYb{
+  color: hsl(179, 100%, 13%);
+}
+button{
+  font-family: "Big Shoulders Display", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-weight: 700;
+
+}
+.App{
+  display: grid;
+  grid-template-columns:repeat(3, 1fr);
+  width: 50%;
+  
+}
+div{
+  border-radius:10px;
+  padding: 30px;
+  height: 100%;
+}
+button{
+  cursor: pointer;
+  border-radius: 20px;
+  border: none;
+  padding: 8px;
+  width: 70%;
+}
+h1{
+  color: white;
+}
+p{
+  color: hsla(0, 0%, 100%, 0.75);
+}
+#SEDANSb:hover,#LUXURYb:hover,#SUVSb:hover{
+  background-color: transparent;
+  color: white;
+  border: solid white 1px ;
+}
+@media (max-width:500px){
+  .App{
+    width: 90%;
+  }
+.App{
+  grid-template-columns: 1fr;
+}
+}
