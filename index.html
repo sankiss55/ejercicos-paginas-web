@@ -1,56 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OCR con Tesseract.js y Cámara</title>
+        <!--
+                Tomar una fotografía y guardarla en un archivo v3
+            @date 2018-10-22
+            @author parzibyte
+            @web parzibyte.me/blog
+        -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <title>Tomar foto con Javascript y PHP v3.0</title>
+        <style>
+                @media only screen and (max-width: 700px) {
+                        video {
+                                max-width: 100%;
+                        }
+                }
+        </style>
 </head>
+
 <body>
-
-  <h1>Captura de texto con la cámara</h1>
-
-  <video id="video" width="320" height="240" autoplay></video>
-  <button id="capture">Capturar y leer</button>
-  <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-  <p id="result">Resultado: </p>
-
-  <!-- Incluir Tesseract.js -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
-
-  <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
-    const resultElement = document.getElementById('result');
-
-    // Acceder a la cámara
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        video.srcObject = stream;
-      })
-      .catch((err) => {
-        console.error("Error accediendo a la cámara: ", err);
-      });
-
-    // Capturar fotograma y realizar OCR
-    document.getElementById('capture').addEventListener('click', () => {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = canvas.toDataURL('image/png');
-
-      // Llamar a Tesseract.js para procesar la imagen
-      Tesseract.recognize(
-        imageData,
-        'eng', // Idioma para OCR, puedes cambiarlo a otro si lo necesitas
-        {
-          logger: (m) => console.log(m), // Progreso del OCR
-        }
-      ).then(({ data: { text } }) => {
-        resultElement.textContent = `Resultado: ${text}`;
-      }).catch((err) => {
-        console.error("Error al procesar la imagen: ", err);
-      });
-    });
-  </script>
-
+        <h1>Tomar foto con JavaScript v3.0</h1>
+        <p>
+                Programado por Luis Cabrera Benito a.k.a. <a target="_blank" href="https://www.parzibyte.me/blog">parzibyte</a>
+        </p>
+        <h1>Selecciona un dispositivo</h1>
+        <div>
+                <select name="listaDeDispositivos" id="listaDeDispositivos"></select>
+                <button id="boton">Tomar foto</button>
+                <p id="estado"></p>
+        </div>
+        <br>
+        <video muted="muted" id="video"></video>
+        <canvas id="canvas" style="display: none;"></canvas>
 </body>
+<script src="script.js"></script>
+
 </html>
