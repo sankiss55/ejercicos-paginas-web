@@ -1,5 +1,5 @@
 /*
-    Tomar una fotografía y guardarla en un archivo v3
+    Tomar una fotografía y mostrarla en la página
     @date 2018-10-22
     @author parzibyte
     @web parzibyte.me/blog
@@ -14,6 +14,7 @@ const $video = document.querySelector("#video"),
     $canvas = document.querySelector("#canvas"),
     $estado = document.querySelector("#estado"),
     $boton = document.querySelector("#boton"),
+    $imagenCapturada = document.querySelector("#imagenCapturada"),
     $listaDeDispositivos = document.querySelector("#listaDeDispositivos");
 
 const limpiarSelect = () => {
@@ -39,7 +40,7 @@ const llenarSelectConDispositivosDisponibles = () => {
                 }
             });
 
-            // Vemos si encontramos algún dispositivo, y en caso de que si, entonces llamamos a la función
+            // Vemos si encontramos algún dispositivo, y en caso de que sí, entonces llamamos a la función
             if (dispositivosDeVideo.length > 0) {
                 // Llenar el select
                 dispositivosDeVideo.forEach(dispositivo => {
@@ -59,9 +60,8 @@ const llenarSelectConDispositivosDisponibles = () => {
         $estado.innerHTML = "Parece que tu navegador no soporta esta característica. Intenta actualizarlo.";
         return;
     }
-    //Aquí guardaremos el stream globalmente
+    // Aquí guardaremos el stream globalmente
     let stream;
-
 
     // Comenzamos pidiendo los dispositivos
     obtenerDispositivos()
@@ -77,15 +77,13 @@ const llenarSelectConDispositivosDisponibles = () => {
                 }
             });
 
-            // Vemos si encontramos algún dispositivo, y en caso de que si, entonces llamamos a la función
+            // Vemos si encontramos algún dispositivo, y en caso de que sí, entonces llamamos a la función
             // y le pasamos el id de dispositivo
             if (dispositivosDeVideo.length > 0) {
                 // Mostrar stream con el ID del primer dispositivo, luego el usuario puede cambiar
                 mostrarStream(dispositivosDeVideo[0].deviceId);
             }
         });
-
-
 
     const mostrarStream = idDeDispositivo => {
         _getUserMedia({
@@ -101,7 +99,7 @@ const llenarSelectConDispositivosDisponibles = () => {
 
                 // Escuchar cuando seleccionen otra opción y entonces llamar a esta función
                 $listaDeDispositivos.onchange = () => {
-                    // Detener el stream
+                    // Detener el stream actual
                     if (stream) {
                         stream.getTracks().forEach(function(track) {
                             track.stop();
@@ -118,39 +116,22 @@ const llenarSelectConDispositivosDisponibles = () => {
                 $video.srcObject = stream;
                 $video.play();
 
-                //Escuchar el click del botón para tomar la foto
-                //Escuchar el click del botón para tomar la foto
+                // Escuchar el click del botón para tomar la foto
                 $boton.addEventListener("click", function() {
-
-                    //Pausar reproducción
+                    // Pausar reproducción
                     $video.pause();
 
-                    //Obtener contexto del canvas y dibujar sobre él
+                    // Obtener contexto del canvas y dibujar sobre él
                     let contexto = $canvas.getContext("2d");
                     $canvas.width = $video.videoWidth;
                     $canvas.height = $video.videoHeight;
                     contexto.drawImage($video, 0, 0, $canvas.width, $canvas.height);
 
-                    let foto = $canvas.toDataURL(); //Esta es la foto, en base 64
-                    $estado.innerHTML = "Enviando foto. Por favor, espera...";
-                    fetch("./guardar_foto.php", {
-                            method: "POST",
-                            body: encodeURIComponent(foto),
-                            headers: {
-                                "Content-type": "application/x-www-form-urlencoded",
-                            }
-                        })
-                        .then(resultado => {
-                            // A los datos los decodificamos como texto plano
-                            return resultado.text()
-                        })
-                        .then(nombreDeLaFoto => {
-                            // nombreDeLaFoto trae el nombre de la imagen que le dio PHP
-                            console.log("La foto fue enviada correctamente");
-                            $estado.innerHTML = `Foto guardada con éxito. Puedes verla <a target='_blank' href='./${nombreDeLaFoto}'> aquí</a>`;
-                        })
+                    // Mostrar la imagen capturada en el elemento <img>
+                    $imagenCapturada.src = $canvas.toDataURL();
+                    $estado.innerHTML = "Foto tomada";
 
-                    //Reanudar reproducción
+                    // Reanudar reproducción
                     $video.play();
                 });
             }, (error) => {
