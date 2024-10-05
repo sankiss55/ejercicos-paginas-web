@@ -1,6 +1,4 @@
 
-"use strict";
-
 //capturar video ó imagen
 const video = document.querySelector(".video");
 const canvas = document.querySelector(".canvas");
