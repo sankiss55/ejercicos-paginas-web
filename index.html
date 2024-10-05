@@ -1,521 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="utf-8">
-  <title>Notaria 16 Tezontepec</title>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <meta content="" name="keywords">
-  <meta content="" name="description">
-
-  <!-- Favicons -->
-  <link href="img/logo_notaria_16.jpg" rel="icon">
-  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;700&display=swap" rel="stylesheet">
-  <!-- Bootstrap CSS File -->
-  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Libraries CSS Files -->
-  <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-  <link href="lib/animate/animate.min.css" rel="stylesheet">
-  <link href="lib/ionicons/css/ionicons.min.css" rel="stylesheet">
-  <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-  <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-
-  <!-- Main Stylesheet File -->
-  <link href="css/style.css" rel="stylesheet">
-<link rel="stylesheet" href="css/style2.css">
-  <!-- =======================================================
-    Theme Name: BizPage
-    Theme URL: https://bootstrapmade.com/bizpage-bootstrap-business-template/
-    Author: BootstrapMade.com
-    License: https://bootstrapmade.com/license/
-  ======================================================= -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCR con Tesseract.js y Cámara</title>
 </head>
-
 <body>
-  <div id="ventana_modal">
-    <div id="tache_div"> <span id="tache_ventana_modal">&times;</span></div>
-     <div id="divimag">
-       
-     <img id="imag_testamento_secundaria" src="img/familia-padres-e-hijos-divirtiendose-juntos-sofa_23.png" alt="dia_de_testamento">
-    <div id="imag_testamento_principal_div" class="rd-navbar-thin.rd-navbar-static">
-     <img id="imag_testamento_principal" src="img/dia_del_testamento2.jpg" alt="dia_de_testamento">
-     
-     <h5>NOTARIA PÚBLICA NO. 16</h5>
-     <p>Llamanos: (763) 7866 224</p>
-    </div>
-     <img id="imag_testamento_trercera" src="img/familia-perfeita.jpg" alt="dia_de_testamento">
-     </div>
-   </div>
-   <div  id="ventana" class="page">
-  <!--==========================
-    Header
-  ============================-->
-  <header id="header">
-    <div class="container-fluid">
 
-      <div id="logo" class="pull-left">
-        <h1><a href="#intro" class="scrollto"> <img src="img/LOGO NOTARIA16.jpg" alt="logo" style="width: 100%; border-radius:2px; height: 100px;"></a></h1>
-        <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="#intro"><img src="img/logo.png" alt="" title="" /></a>-->
-      </div>
-      <nav id="nav-menu-container">
-        <ul class="nav-menu">
-          <li class="menu-active"><a href="#">Inicio</a></li>
-          <li><a href="nosotros.html">nosotros</a></li>
-          <li><a href="servicios.html">Servicios</a></li>
+  <h1>Captura de texto con la cámara</h1>
 
-          <li><a href="contacto.html">Contacto</a></li>
-        </ul>
-      </nav><!-- #nav-menu-container -->
-    </div>
-  </header><!-- #header -->
+  <video id="video" width="320" height="240" autoplay></video>
+  <button id="capture">Capturar y leer</button>
+  <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+  <p id="result">Resultado: </p>
 
-  <!--==========================
-    Intro Section
-  ============================-->
-  <section id="intro">
-    <div class="intro-container">
-      <div id="introCarousel" class="carousel  slide carousel-fade" data-ride="carousel">
+  <!-- Incluir Tesseract.js -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
 
-        <ol class="carousel-indicators"></ol>
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const resultElement = document.getElementById('result');
 
-        <div class="carousel-inner" role="listbox">
+    // Acceder a la cámara
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((err) => {
+        console.error("Error accediendo a la cámara: ", err);
+      });
 
-          <div class="carousel-item active">
-            <div class="carousel-background"><img src="img/notaria_por_dento.jpeg" alt=""></div>
-            <div class="carousel-container">
-              <div class="carousel-content">
-                <h2>Bienvenido a Notaria 16 Tezontepec</h2>
-                <p>En nuestra notaria cada firma y documento cuenta con la confianza y respaldo de nuestra experiencia.</p>
-                <!--<a href="#featured-services" class="btn-get-started scrollto">Get Started</a>-->
-              </div>
-            </div>
-          </div>
+    // Capturar fotograma y realizar OCR
+    document.getElementById('capture').addEventListener('click', () => {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = canvas.toDataURL('image/png');
 
-          <div class="carousel-item">
-            <div class="carousel-background"><img src="img/fachada.jpg" alt=""></div>
-            <div class="carousel-container">
-              <div class="carousel-content">
-                <h2>Nuestro compromiso con ustedes</h2>
-                <p>La Notaria 16 es reconocida por nuestro compromiso de alta excelencia. Cada trámite es manejado con precisión, profesionalismo y ética.</p>
-                <!--<a href="#featured-services" class="btn-get-started scrollto">Get Started</a>-->
-              </div>
-            </div>
-          </div>
-
-          <div class="carousel-item">
-            <div class="carousel-background"><img src="img/simplified.png" alt=""></div>
-            <div class="carousel-container">
-              <div class="carousel-content">
-                <h2>Nos Enfocamos En Ti</h2>
-                <p>Nos centramos en brindarte oportunidades para simplificar tu vida. Desde asesoramiento personalizado hasta soluciones notariales eficientes, estamos aquí para apoyarte en cada etapa, ya sea en el ámbito personal o empresarial</p>
-                <!--<a href="#featured-services" class="btn-get-started scrollto">Get Started</a>-->
-              </div>
-            </div>
-          </div>
-
-          <div class="carousel-item">
-            <div class="carousel-background"><img src="img/notaria16imagen.jpg" alt=""></div>
-            <div class="carousel-container">
-              <div class="carousel-content">
-                <h2>Nuestro Trabajo </h2>
-                <p>Creemos en construir relaciones basadas en la confianza y el respeto mutuo. Nuestro equipo está comprometido con la comunidad, generando un ambiente cercano y profesional para que te sientas respaldado en cada paso de tu proceso legal.</p>
-                <!--<a href="#featured-services" class="btn-get-started scrollto">Get Started</a>-->
-              </div>
-            </div>
-          </div>
-
-          <div class="carousel-item">
-            <div class="carousel-background"><img src="img/Notaria_por_dentro_3.jpeg" alt=""></div>
-            <div class="carousel-container">
-              <div class="carousel-content">
-                <h2>Nuestra Localizacion</h2>
-                <p>Nos encontramos Carretera Mixquihuala-Tlahuelilpán, brindando asesoría jurídica. Nuestra notaría es de fácil acceso, permitiéndote resolver tus trámites legales de manera eficiente y segura.</p>
-                <!--<a href="#featured-services" class="btn-get-started scrollto">Get Started</a>-->
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <a class="carousel-control-prev" href="#introCarousel" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon ion-chevron-left" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-
-        <a class="carousel-control-next" href="#introCarousel" role="button" data-slide="next">
-          <span class="carousel-control-next-icon ion-chevron-right" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-
-      </div>
-    </div>
-  </section><!-- #intro -->
-
-  <main id="main">
-
-
-    <!--==========================
-      Featured Services Section
-    ============================-->
-    <section id="featured-services">
-      <div class="container">
-        <div class="row">
-
-          <div class="col-lg-4 box">
-            <i class="ion-ios-bookmarks-outline"></i>
-            <h4 class="title"><a href="contacto.html">Agenda Una Cita</a></h4>
-            <p class="description">¡Agenda tu cita con nosotros! Contáctanos por teléfono o acercate a uestras oficinas, donde te daremos mas informacion</p>
-          </div>
-
-          <div class="col-lg-4 box box-bg">
-            <i class="ion-ios-stopwatch-outline"></i>
-            <h4 class="title"><a href="servicios.html">Tiempo Notarial</a></h4>
-            <p class="description">El tiempó dependiendo la complejidad del documento y de la disponibilidad del notario. Sin embargo, nuestro equipo está aquí para ayudarte y hacer el proceso lo más rápido y sencillo posible.</p>
-          </div>
-
-          <div class="col-lg-4 box">
-            <i class="ion-ios-heart-outline"></i>
-            <h4 class="title"><a href="nosotros.html">Nosotros y Ustedes</a></h4>
-            <p class="description">Estamos dedicados a ti y a tus necesidades.Nos entusiasma trabajar contigo y ofrecerte el mejor servicio posible.</p>
-          </div>
-
-        </div>
-      </div>
-    </section><!-- #featured-services -->
-   <section class="section-bg wow fadeInUp">
-    <!--inicio de años de experiencia-->
-    <div class="container-fluid py-5">
-     <div class="container py-5">
-         <div class="row">
-             <div class="col-lg-5">
-                 <img class="img-fluid rounded" style=" margin-top: 60%; transform: translateY(-60%);" src="img/BANNER1-640w.webp" alt="">
-             </div>
-             <div class="col-lg-7 mt-4 mt-lg-0">
-                 <h2 class="position-relative text-center bg-white text-primary rounded p-3 mt-4 mb-4 d-none d-lg-block" style="width: 350px; margin-left: -205px;">25 Años de Experiencia</h2>
-                 <h6 class="text-uppercase">Conoce Nuestra Notaría</h6>
-                 <h1 class="mb-4">Brindamos Servicios Notariales Confiables y Profesionales</h1>
-                 <p>En la Notaría 16, nos dedicamos a garantizar la seguridad jurídica en cada trámite que realizamos. Desde contratos inmobiliarios hasta trámites sucesorios, ofrecemos un servicio transparente, eficaz y con total compromiso hacia nuestros clientes.</p>
-                 <a href="contacto.html" class="btn btn-primary mt-2">Más Información </a>
-             </div>                
-         </div>
-     </div>
- </div>
- <!-- About End -->
- 
- 
- <!-- Services Start -->
- <div class="container-fluid py-5">
-     <div class="container py-5">
-         <div class="row">
-             <div class="col-lg-3">
-                 <h6 class="text-uppercase">Nuestros Servicios</h6>
-                 <h1 class="mb-4">Área Notarial</h1>
-                 <p>En la Notaría 16, proporcionamos una extensa gama de servicios notariales, que abarcan desde la autenticación de actos jurídicos hasta la formalización de contratos y trámites mercantiles. Nos distinguimos por ofrecer un servicio diligente, imparcial y conforme a los más altos estándares legales.</p>
-                 <a href="servicios.html" class="btn btn-primary mt-2">Conoce Más</a>
-             </div>                             
-             <div class="col-lg-9 pt-5 pt-lg-0">
-                 <div class="bg-primary rounded" style="height: 200px;"></div>
-                 <div class="owl-carousel service-carousel position-relative" style="margin-top: -100px; padding: 0 30px;">
-                     <div class="d-flex flex-column align-items-center text-center bg-white rounded pt-4">
-                         <div class="">
-                          
-
-                          <i class="fa-solid  fa-2x fa-file-signature"style="height: 100%;"></i>
-                         </div>
-                         <h5 class="mb-4 px-4">
-                          DECLARACION UNILATERAL DE LA VOLUNTAD</h5>
-                         <p class="m-0">Asesoramos y formalizamos declaraciones unilaterales de voluntad, asegurando su legalidad y cumplimiento conforme a las normativas vigentes.</p>
-                     </div>
-                     <div class="d-flex flex-column align-items-center text-center bg-white rounded pt-4">
-                         <div class="">
-                             <i class="fa fa-2x fa-users"></i>
-                         </div>
-                         <h5 class="mb-4 px-4">PODERES PERSONAS FISICAS</h5>
-                         <p class="m-0">Ofrecemos servicios de otorgamiento de poderes notariales a personas físicas, garantizando la validez y efectividad de cada acto jurídico.</p>
-                     </div>
-                     <div class="d-flex flex-column align-items-center text-center bg-white rounded pt-4">
-                         <div class="">
-                          <i class="fa fa-2x fa-regular fa-file" ></i>
-                         </div>
-                         <h5 class="mb-4 px-4">CESION DE DERECHOS LITIGIOSOS</h5>
-                         <p class="m-0">Ofrecemos la cesión de derechos litigiosos, permitiendo que las partes interesadas transfieran sus derechos sobre litigios, garantizando la legalidad y seguridad jurídica en el proceso.                         </p>
-                     </div>
-                     <div class="d-flex flex-column align-items-center text-center bg-white rounded pt-4">
-                         <div class="">
-                             <i class="fa fa-2x fa-gavel"></i>
-                         </div>
-                         <h5 class="mb-4 px-4">PERMISOS</h5>
-                         <p class="m-0">Asesoramos y tramitamos la obtención de permisos legales requeridos en diversas situaciones, asegurando que los documentos estén debidamente autorizados por las autoridades competentes.</p>
-                     </div>
-                 </div>
-             </div>
-         </div></section>
-    <!--==========================
-      Clients Section
-    ============================-->
-    <section id="testimonials" class="section-bg wow fadeInUp">
-      <div class="container">
-
-        <header class="section-header">
-          <h3>Testimonios</h3>
-        </header>
-
-        <div class="owl-carousel testimonials-carousel">
-          <div class="testimonial-item">
-        <!--  <img src="img/testimonial-2.jpg" class="testimonial-img" alt="">-->  
-            <h3>Sara Vivas</h3>
-            <p>
-              <img src="img/quote-sign-left.png" class="quote-sign-left" alt="">
-              La eficiencia y rapidez con la que la notaría manejó mi caso fue notable. No solo cumplieron con todos los requisitos legales, sino que también lo hicieron en un tiempo récord, lo cual fue muy conveniente para mí.
-              <img src="img/quote-sign-right.png" class="quote-sign-right" alt="">
-            </p>
-          </div>
-
-          <div class="testimonial-item">
-            <!-- <img src="img/testimonial-3.jpg" class="testimonial-img" alt="">-->  
-            <h3>Jena Karlis</h3>
-            <p>
-              <img src="img/quote-sign-left.png" class="quote-sign-left" alt="">
-              Agradezco la transparencia y claridad con la que la notaría explicó cada paso del proceso. No hubo sorpresas ni costos ocultos, y siempre estuvieron disponibles para responder a mis preguntas.
-              <img src="img/quote-sign-right.png" class="quote-sign-right" alt="">
-            </p>
-          </div>
-
-          <div class="testimonial-item">
-            <!-- <img src="img/testimonial-3.jpg" class="testimonial-img" alt="">-->  
-            <h3>Hugo Velazco</h3>
-            <p>
-              <img src="img/quote-sign-left.png" class="quote-sign-left" alt="">
-             El alto nivel de profesionalismo y conocimiento. Su atención al detalle y su compromiso con la veracidad y la legalidad me brindaron una gran tranquilidad. Además, su trato respetuoso y su imparcialidad en todo momento reflejan su integridad y ética profesional. 
-              <img src="img/quote-sign-right.png" class="quote-sign-right" alt="">
-            </p>
-          </div>
-          <div class="testimonial-item">
-            <!-- <img src="img/testimonial-3.jpg" class="testimonial-img" alt="">-->  
-            <h3>Daniel Sanchez</h3>
-            <p>
-              <img src="img/quote-sign-left.png" class="quote-sign-left" alt="">
-              La notaría me ofreció un trato respetuoso y su imparcialidad en todo momento reflejan su integridad y ética profesional. Me sentí muy bien atendido y seguro durante todo el proceso.
-              <img src="img/quote-sign-right.png" class="quote-sign-right" alt="">
-            </p>
-          </div>
-          <div class="testimonial-item">
-            <!-- <img src="img/testimonial-3.jpg" class="testimonial-img" alt="">-->  
-            <h3>Dana Juarez</h3>
-            <p>
-              <img src="img/quote-sign-left.png" class="quote-sign-left" alt="">
-              Desde el primer momento, la notaría me inspiró confianza y seguridad. Su equipo fue muy profesional y siempre estuvo dispuesto a ayudarme con cualquier duda o inquietud que tuviera. Sin duda, recomendaría sus servicios a cualquiera que necesite trámites notariales.
-              <img src="img/quote-sign-right.png" class="quote-sign-right" alt="">
-            </p>
-          </div>
-        </div>
-        
-      </div>
-      </div>
-    </section><!-- #testimonials -->
-    <section id="testimonials" class="section-bg wow fadeInUp">
-     <div class="container">
-      <div class="owl-carousel referencias testimonials-carousel">
-        <div class="testimonial-item">
-         <div class="div_referencias">
-         <a href="https://colegiodenotarioshidalgo.org.mx/"> <img style="width: 50% !important;"  src="img/Pasted-20240916-165235_preview_rev_1.png" alt="2"></a>
-          <a href="https://www.notariadomexicano.org.mx/"><img style="width: 50% !important;"  src="img/colegio_preview_rev_1.png" alt="imagen"></a>
-          
-          <a href="https://www.gob.mx/curp/"><img src="img/4.png" alt="4"></a>
-         </div>
-        </div>
-       
-        <div class="testimonial-item">
-        <div class="div_referencias">
-          <a href="https://www.sat.gob.mx/home"><img  src="img/3.png" alt="3"></a>
-          <a href="https://ifrem.edomex.gob.mx/"><img src="img/5.png" alt="5"></a>
-          
-          <a href="https://ine.mx/"><img  src="img/6.png" alt="6"></a>
-        </div>
-       
-      </div>
-     </div>
-    </section>
-   
-    <main id="main">
-      <!--==========================
-        Contact Section
-      ============================-->
-      <section id="contact" class="section-bg wow fadeInUp">
-        <div class="container">
-  
-          <div class="section-header">
-            <h3>Contactanos</h3>
-            <p>Contactanos en nuestras principales redes de comunicación</p>
-          </div>
-  
-          <div class="row contact-info">
-  
-            <div class="col-md-4">
-              <div class="contact-address">
-                <i class="ion-ios-location-outline"></i>
-                <h3>Donde nos Ubicamos</h3>
-                <address>Notaria Pública Número 16 <br>
-                  Carretera Mixquihuala-Tlahuelilpán, Km 8.5, Col. El Tinaco,  Tezontepec Aldama.</address>
-              </div>
-            </div>
-  
-            <div class="col-md-4">
-              <div class="contact-phone">
-                <i class="ion-ios-telephone-outline"></i>
-                <h3>Nuestro Numero</h3>
-                <p><a href="tel:(763) 7866 224">(763) 7866 224</a></p>
-              </div>
-            </div>
-  
-            <div class="col-md-4">
-              <div class="contact-email">
-                <i class="ion-ios-email-outline"></i>
-                <h3>Correo</h3>
-                <p><a href="https://www.google.com/intl/es-419/gmail/about/">notaria16tezontepec.com.mx </a></p>
-              </div>
-            </div>
-  
-          </div>
-   </section>  
-  </main>
-
-  <!--==========================
-    Footer
-  ============================-->
-  <footer id="footer">
-    <div class="footer-top">
-      <div class="container">
-        <div class="row">
-
-          <div class="col-lg-3 col-md-6 footer-info">
-            <h3>Notaria 16 Tezontepec</h3>
-            <p>La Notaria 16 es reconocida por nuestro compromiso de alta excelencia. Cada trámite es manejado con precisión, profesionalismo y ética.</p>
-          </div>
-
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Navegacion de paginas </h4>
-            <ul>
-              <li><i class="ion-ios-arrow-right"></i> <a href="index.html">Inicio</a></li>
-              <li><i class="ion-ios-arrow-right"></i> <a href="nosotros.html">Nosotros</a></li>
-              <li><i class="ion-ios-arrow-right"></i> <a href="servicios.html">Servicios</a></li>
-              <li><i class="ion-ios-arrow-right"></i> <a href="contacto.html">Contacto</a></li>
-            </ul>
-          </div>
-          <h1></h1>
-          
-          <div class="col-lg-3 col-md-6 footer-contact">
-            <h4>Contactanos</h4>
-            <p>
-              Carretera Mixquihuala-Tlahuelilpán, <br>
-              Km 8.5, Col. El Tinaco,<br>
-              Tezontepec Aldama. <br>
-              <strong>Telefono:</strong>(763) 7866 224<br>
-              <strong>Correo:</strong> <a href="https://www.google.com/intl/es/gmail/about/">notaria16tezontepec.com.mx </a><br>
-            </p>
-
-            <div class="social-links">
-              <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-              <a href="https://www.facebook.com/people/Notar%C3%ADa-P%C3%BAblica-No-16/100067321166658/" class="facebook"><i class="fa fa-facebook"></i></a>
-              <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
-            </div>
-
-          </div>
-
-          <div class="col-lg-3 col-md-6 footer-newsletter">
-            <h4>Para Ti</h4>
-            <p>En Notaría 16, estamos dedicados a ti y a tus necesidades.Nos entusiasma trabajar contigo y ofrecerte el mejor servicio posible.
-              Contáctanos...
-            </p>
-
-           
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="copyright">
-        &copy; Notaria 16  <strong>Tezontepec</strong>. Todos los derechos recervados
-      </div>
-     
-    </div>
-  </footer><!-- #footer -->
-
-  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
-  
-</div>
-  <!-- Uncomment below i you want to use a preloader -->
-  <!-- <div id="preloader"></div> -->
-
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-    <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
-  <!-- JavaScript Libraries -->
-  <script src="lib/jquery/jquery.min.js"></script>
-  <script src="lib/jquery/jquery-migrate.min.js"></script>
-  <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="lib/easing/easing.min.js"></script>
-  <script src="lib/superfish/hoverIntent.js"></script>
-  <script src="lib/superfish/superfish.min.js"></script>
-  <script src="lib/wow/wow.min.js"></script>
-  <script src="lib/waypoints/waypoints.min.js"></script>
-  <script src="lib/counterup/counterup.min.js"></script>
-  <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-  <script src="lib/isotope/isotope.pkgd.min.js"></script>
-  <script src="lib/lightbox/js/lightbox.min.js"></script>
-  <script src="lib/touchSwipe/jquery.touchSwipe.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-  <script src="lib/easing/easing.min.js"></script>
-  <script src="lib/waypoints/waypoints.min.js"></script>
-  <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-  <script src="lib/tempusdominus/js/moment.min.js"></script>
-  <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-  <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-  <!-- Contact Javascript File -->
-  <script src="mail/jqBootstrapValidation.min.js"></script>
-<!-- JavaScript Libraries -->
-<script src="lib/jquery/jquery.min.js"></script>
-<script src="lib/jquery/jquery-migrate.min.js"></script>
-<script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="lib/easing/easing.min.js"></script>
-<script src="lib/superfish/hoverIntent.js"></script>
-<script src="lib/superfish/superfish.min.js"></script>
-<script src="lib/wow/wow.min.js"></script>
-<script src="lib/waypoints/waypoints.min.js"></script>
-<script src="lib/counterup/counterup.min.js"></script>
-<script src="lib/owlcarousel/owl.carousel.min.js"></script>
-<script src="lib/isotope/isotope.pkgd.min.js"></script>
-<script src="lib/lightbox/js/lightbox.min.js"></script>
-<script src="lib/touchSwipe/jquery.touchSwipe.min.js"></script>
-  <!-- Contact Form JavaScript File -->
-  <script src="contactform/contactform.js"></script>
-
-  <!-- Template Main Javascript File -->
-  <script defer src="js/main.js"></script>
+      // Llamar a Tesseract.js para procesar la imagen
+      Tesseract.recognize(
+        imageData,
+        'eng', // Idioma para OCR, puedes cambiarlo a otro si lo necesitas
+        {
+          logger: (m) => console.log(m), // Progreso del OCR
+        }
+      ).then(({ data: { text } }) => {
+        resultElement.textContent = `Resultado: ${text}`;
+      }).catch((err) => {
+        console.error("Error al procesar la imagen: ", err);
+      });
+    });
+  </script>
 
 </body>
 </html>
-
