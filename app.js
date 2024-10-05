@@ -1,4 +1,4 @@
-Fotos 2
+
 "use strict";
 
 //capturar video ó imagen
