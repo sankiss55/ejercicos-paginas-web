@@ -1,33 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <script defer src="app.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-  </head>
-  <body>
-    <header>
-      PhotoJs - Jugando con la webcam y Js
-    </header>
-    <section class="cam-container">
-      <div class="video-wrap">
-        <video class="video"></video>
-      </div>
-      <div class="canvas-wrap">
-        <canvas class="canvas" width="420" height="340">
-          <img
-            src=""
-            class="photo"
-            alt="photo"
-          />
-        </canvas>
-      </div>
-      <div>
-        <button class="start-btn">PHOTO</button>
-      </div>
-    </section>
-  </body>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "c722871c-9158-4976-891b-c02f422db3eb",
+      safari_web_id: "web.onesignal.auto.40e8587d-66e6-4615-b716-6bb570edb005",
+      notifyButton: {
+        enable: true,
+      },
+    });
+  });
+</script>
+</head>
+<body>
+    
+</body>
 </html>
