@@ -5,57 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FCM</title>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "700b89d9-e489-440e-8f03-e496efad0fa2",
+    });
+  });
+</script>
 </head>
 
 <body>
-    <h1>Firebase Push Notification</h1>
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
-        
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-            apiKey: "AIzaSyBKuYQFLCTb5DzF-Dm-vLUMNNmGtddVJ4A",
-            authDomain: "prueba-560a8.firebaseapp.com",
-            projectId: "prueba-560a8",
-            storageBucket: "prueba-560a8.appspot.com",
-            messagingSenderId: "653437655913",
-            appId: "1:653437655913:web:faf1ca10d9174aa1537bf8",
-            measurementId: "G-QX4TMYPNMM"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
-
-        // Register the service worker
-        navigator.serviceWorker.register("sw.js").then(registration => {
-            getToken(messaging, {
-                serviceWorkerRegistration: registration,
-                vapidKey: 'BHpv3mxyYiyWNNmV38hxB5-MYp_RhRbxWbybiD0YwXE446HnMFsp0PCjPmtCiY9Tg0cEg5K4QX5lYy1qZBjj_Gk'
-            }).then((currentToken) => {
-                if (currentToken) {
-                    // Show token in alert
-                    alert("Token is: " + currentToken);
-                    // Send the token to your server and update the UI if necessary
-                } else {
-                    // Permission not granted
-                    alert('No registration token available. Request permission to generate one.');
-                    handlePermissionDenied();
-                }
-            }).catch((err) => {
-                alert('An error occurred while retrieving token. ' + err);
-            });
-        });
-
-        function handlePermissionDenied() {
-            // Notify the user that permissions were blocked and provide instructions
-            alert('To enable notifications, please allow notifications in your browser settings.');
-        }
-
-    </script>
+     
 </body>
 
 </html>
