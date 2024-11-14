@@ -9,10 +9,6 @@
 
   </head>
   <body>
-    <select name="" id="opciones">
-
-    </select>
-    <button id="seleccionarwebcam">seleccionar</button>
       <center><h1>Card Detector</h1>
       <h3>Card like object detection in real time using TensorFlow.js and Javascript</h3>
       <p>Wait for the model to load before clicking the button to enable the camera - at which point it will become visible to use.</p>
@@ -26,7 +22,9 @@
 
 
         <div id="liveView" class="camView">
-          <center><button id="webcamButton" type="button" >Enable Camera</button></center>
+          <center><button id="webcamButton" type="button" >Enable Camera</button> <select name="" id="opciones">
+
+          </select></center>
           <video id="webcam" autoplay muted width="640" height="480"></video>
 
           <div>
