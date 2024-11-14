@@ -41,55 +41,53 @@ function enableCam(event) {
 
     // Hide the button once clicked.
     event.target.classList.add('removed');
-
-    // getUsermedia parameters to force video but not audio.
-    
-
-    // Activate the webcam stream.
+    const selectOpciones = document.getElementById("opciones");
+    const deviceIdSeleccionado = selectOpciones.value;
+  
+    const constraints = {
+      video: {
+        deviceId: deviceIdSeleccionado ? { exact: deviceIdSeleccionado } : undefined
+      }
+    };
+  
+    navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+      const video = document.getElementById("webcam"); // Asegúrate de que tengas un elemento <video> en tu HTML con id="video"
+      video.srcObject = stream;
+      video.play();
+    }).catch(function(error) {
+      console.error("Error al iniciar la cámara:", error);
+    });
     
   }
+// getUsermedia parameters to force video but not audio.
+const constraints = {
+  video: true
+};
 
-  navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-    // Detener los tracks para liberar la cámara después de obtener la lista de dispositivos
-    stream.getTracks().forEach(track => track.stop());
-    
-    // Enumerar los dispositivos
-    navigator.mediaDevices.enumerateDevices().then(function(respuesta) {
-      const videos = respuesta.filter(dispositivo => dispositivo.kind === "videoinput");
-      let selectOpciones = document.getElementById("opciones");
+// Activate the webcam stream.
+navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+  // Detener los tracks para liberar la cámara después de obtener la lista de dispositivos
+  stream.getTracks().forEach(track => track.stop());
   
-      for (let i = 0; i < videos.length; i++) {
-        const opcionNueva = document.createElement("option");
-        opcionNueva.value = videos[i].deviceId;
-        opcionNueva.text = videos[i].label ;
-        selectOpciones.appendChild(opcionNueva);
-      }
-    }).catch(function(error) {
-      console.error("Error al enumerar los dispositivos:", error);
-    });
-  }).catch(function(error) {
-    console.error("Error al obtener el stream de video:", error);
-  });
-  // Función para activar la cámara seleccionada
-document.getElementById("seleccionarwebcam").addEventListener("click", function() {
-  const selectOpciones = document.getElementById("opciones");
-  const deviceIdSeleccionado = selectOpciones.value;
+  // Enumerar los dispositivos
+  navigator.mediaDevices.enumerateDevices().then(function(respuesta) {
+    const videos = respuesta.filter(dispositivo => dispositivo.kind === "videoinput");
+    let selectOpciones = document.getElementById("opciones");
 
-  const constraints = {
-    video: {
-      deviceId: deviceIdSeleccionado ? { exact: deviceIdSeleccionado } : undefined
+    for (let i = 0; i < videos.length; i++) {
+      const opcionNueva = document.createElement("option");
+      opcionNueva.value = videos[i].deviceId;
+      opcionNueva.text = videos[i].label ;
+      selectOpciones.appendChild(opcionNueva);
     }
-  };
-
-  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-    const video = document.getElementById("webcam"); // Asegúrate de que tengas un elemento <video> en tu HTML con id="video"
-    video.srcObject = stream;
-    video.play();
-    enableCam();
   }).catch(function(error) {
-    console.error("Error al iniciar la cámara:", error);
+    console.error("Error al enumerar los dispositivos:", error);
   });
+}).catch(function(error) {
+  console.error("Error al obtener el stream de video:", error);
 });
+
+
 // Pretend model has loaded so we can try out the webcam code.
 var model = true;
 demosSection.classList.remove('invisible');
