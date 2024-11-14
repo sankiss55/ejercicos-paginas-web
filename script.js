@@ -173,7 +173,7 @@ function predictWebcam() {
     for (let n = 0; n < predictions.length; n++) {
 
       // Si estamos más del 77% seguros de que lo clasificamos correctamente, ¡dibújalo!
-      if (predictions[n].score > 0.85) {
+      if (predictions[n].score > 0.78) {
         if (predictions[n].class == targetObj){
             // console.log(predictions[n].class);
 
