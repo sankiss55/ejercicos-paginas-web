@@ -43,9 +43,7 @@ function enableCam(event) {
     event.target.classList.add('removed');
 
     // getUsermedia parameters to force video but not audio.
-    const constraints = {
-      video: true
-    };
+    
 
     // Activate the webcam stream.
     
@@ -84,9 +82,10 @@ document.getElementById("seleccionarwebcam").addEventListener("click", function(
   };
 
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-    const video = document.getElementById("video"); // Asegúrate de que tengas un elemento <video> en tu HTML con id="video"
+    const video = document.getElementById("webcam"); // Asegúrate de que tengas un elemento <video> en tu HTML con id="video"
     video.srcObject = stream;
     video.play();
+    enableCam();
   }).catch(function(error) {
     console.error("Error al iniciar la cámara:", error);
   });
