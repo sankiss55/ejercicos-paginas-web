@@ -53,6 +53,7 @@ function enableCam(event) {
     navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
       const video = document.getElementById("webcam"); // Asegúrate de que tengas un elemento <video> en tu HTML con id="video"
       video.srcObject = stream;
+        video.addEventListener('loadeddata', predictWebcam);
       video.play();
     }).catch(function(error) {
       console.error("Error al iniciar la cámara:", error);
