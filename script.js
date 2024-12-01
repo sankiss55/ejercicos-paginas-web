@@ -188,6 +188,10 @@ function submitCardFunc(dataurl) {
 }
 
 
+
+let lastDetection = null; // Almacenará la última detección válida
+let captureCooldown = false; // Controlará el intervalo de captura
+
 function predictWebcam() {
   detectedCardTitle.style.display = "block";
   processedImgTitle.style.display = "block";
@@ -201,6 +205,16 @@ function predictWebcam() {
       liveView.removeChild(children[i]);
     }
     children.splice(0);
+
+    // Mostrar mensaje "Escaneando"
+    const scanningMessage = document.getElementById("scanningMessage");
+    if (!scanningMessage) {
+      const message = document.createElement("p");
+      message.id = "scanningMessage";
+      message.innerText = "Escaneando, por favor no mueva la INE...";
+      message.style = "position: absolute; top: 10px; left: 10px; color: white; font-size: 18px;";
+      liveView.appendChild(message);
+    }
 
     // Recorremos las predicciones y procesamos solo si cumplen las condiciones.
     for (let n = 0; n < predictions.length; n++) {
@@ -219,61 +233,88 @@ function predictWebcam() {
           continue;
         }
 
-        // Mostrar mensaje de detección
-        const p = document.createElement("p");
-        p.innerText =
-          "INE detectada - Confianza: " +
-          Math.round(parseFloat(prediction.score) * 100) +
-          "%";
-        p.style =
-          "margin-left: " +
-          dx +
-          "px; margin-top: " +
-          (dy - 10) +
-          "px; width: " +
-          (dw - 10) +
-          "px; top: 0; left: 0;";
+        // Comparar con la última detección
+        if (lastDetection) {
+          const deltaX = Math.abs(lastDetection.dx - dx);
+          const deltaY = Math.abs(lastDetection.dy - dy);
+          const deltaW = Math.abs(lastDetection.dw - dw);
+          const deltaH = Math.abs(lastDetection.dh - dh);
 
-        const highlighter = document.createElement("div");
-        highlighter.setAttribute("class", "highlighter");
-        highlighter.style =
-          "left: " +
-          dx +
-          "px; top: " +
-          dy +
-          "px; width: " +
-          dw +
-          "px; height: " +
-          dh +
-          "px;";
+          // Si hay movimiento significativo, no procesar
+          if (deltaX > 10 || deltaY > 10 || deltaW > 10 || deltaH > 10) {
+            console.log("INE se movió, esperando estabilidad...");
+            continue;
+          }
+        }
 
-        // Añadir al DOM
-        liveView.appendChild(highlighter);
-        liveView.appendChild(p);
-        children.push(highlighter);
-        children.push(p);
+        // Si no hay cooldown, procesar la captura
+        if (!captureCooldown) {
+          // Activar cooldown para evitar múltiples capturas
+          captureCooldown = true;
+          setTimeout(() => (captureCooldown = false), 5000); // 5 segundos
 
-        // Procesar la imagen detectada
-        const canvas = document.getElementById("canva");
-        const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(video, dx, dy, dw, dh, 0, 0, dw, dh);
+          // Almacenar la detección actual
+          lastDetection = { dx, dy, dw, dh };
 
-        // Recortar y reescalar la tarjeta
-        const trimmedCanvas = trimCanvas(canvas);
-        const image_data_url = trimmedCanvas.toDataURL("image/png");
-        document.querySelector("#cardImg").src = image_data_url;
+          // Mostrar mensaje de detección
+          const p = document.createElement("p");
+          p.innerText =
+            "INE detectada - Confianza: " +
+            Math.round(parseFloat(prediction.score) * 100) +
+            "%";
+          p.style =
+            "margin-left: " +
+            dx +
+            "px; margin-top: " +
+            (dy - 10) +
+            "px; width: " +
+            (dw - 10) +
+            "px; top: 0; left: 0;";
 
-        // Mostrar botón para enviar si se detecta algo
-        if (image_data_url) {
-          submitIdCard.style.display = "block";
-          submitIdCard.onclick = () => submitCardFunc(image_data_url);
-        } else {
-          submitIdCard.style.display = "none";
+          const highlighter = document.createElement("div");
+          highlighter.setAttribute("class", "highlighter");
+          highlighter.style =
+            "left: " +
+            dx +
+            "px; top: " +
+            dy +
+            "px; width: " +
+            dw +
+            "px; height: " +
+            dh +
+            "px;";
+
+          // Añadir al DOM
+          liveView.appendChild(highlighter);
+          liveView.appendChild(p);
+          children.push(highlighter);
+          children.push(p);
+
+          // Procesar la imagen detectada
+          const canvas = document.getElementById("canva");
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(video, dx, dy, dw, dh, 0, 0, dw, dh);
+
+          // Recortar y reescalar la tarjeta
+          const trimmedCanvas = trimCanvas(canvas);
+          const image_data_url = trimmedCanvas.toDataURL("image/png");
+          document.querySelector("#cardImg").src = image_data_url;
+
+          // Mostrar botón para enviar si se detecta algo
+          if (image_data_url) {
+            submitIdCard.style.display = "block";
+            submitIdCard.onclick = () => submitCardFunc(image_data_url);
+          } else {
+            submitIdCard.style.display = "none";
+          }
+
+          console.log("INE capturada exitosamente.");
         }
       }
     }
 
+    
 // Llame a esta función nuevamente para seguir prediciendo cuándo el navegador estará listo.
     window.requestAnimationFrame(predictWebcam);
   });
