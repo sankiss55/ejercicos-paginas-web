@@ -189,82 +189,87 @@ function submitCardFunc(dataurl) {
 
 
 function predictWebcam() {
-  detectedCardTitle.style.display = "block"
-  processedImgTitle.style.display = "block"
+  detectedCardTitle.style.display = "block";
+  processedImgTitle.style.display = "block";
 
+  const targetObj = "book"; // Cambiar si se usa otro modelo que detecte tarjetas directamente
+  const aspectRatioThreshold = 1.6; // Proporción aproximada de una INE horizontal (ancho/alto)
 
-  var targetObj="book"
-  // Ahora comencemos a clasificar un fotograma en la secuencia.
   model.detect(video).then(async function (predictions) {
-// Elimina cualquier resaltado que hayamos hecho en el fotograma anterior.
+    // Elimina cualquier resaltado que hayamos hecho en el fotograma anterior.
     for (let i = 0; i < children.length; i++) {
       liveView.removeChild(children[i]);
     }
     children.splice(0);
 
-    // Ahora recorramos las predicciones y las dibujemos en la vista en vivo si
-    // tienen una puntuación de confianza alta.
+    // Recorremos las predicciones y procesamos solo si cumplen las condiciones.
     for (let n = 0; n < predictions.length; n++) {
+      const prediction = predictions[n];
 
-      // Si estamos más del 77% seguros de que lo clasificamos correctamente, ¡dibújalo!
-      if (predictions[n].score > 0.78) {
-        if (predictions[n].class == targetObj){
-            // console.log(predictions[n].class);
+      if (
+        prediction.score > 0.85 && // Confianza mínima
+        prediction.class === targetObj // Objeto detectado es "book"
+      ) {
+        const [dx, dy, dw, dh] = prediction.bbox;
 
-            let dx=predictions[n].bbox[0]
-            let dy=predictions[n].bbox[1]
-            let dw=predictions[n].bbox[2]
-            let dh=predictions[n].bbox[3]
+        // Verificar que sea horizontal (proporción de aspecto y orientación)
+        const aspectRatio = dw / dh;
+        if (aspectRatio < aspectRatioThreshold) {
+          console.log("Detección ignorada: orientación no válida.");
+          continue;
+        }
 
-            // console.log(dx, dy, dw, dh)
+        // Mostrar mensaje de detección
+        const p = document.createElement("p");
+        p.innerText =
+          "INE detectada - Confianza: " +
+          Math.round(parseFloat(prediction.score) * 100) +
+          "%";
+        p.style =
+          "margin-left: " +
+          dx +
+          "px; margin-top: " +
+          (dy - 10) +
+          "px; width: " +
+          (dw - 10) +
+          "px; top: 0; left: 0;";
 
-            const p = document.createElement('p');
-            p.innerText = 'Card detected  '  + ' - with '
-                + Math.round(parseFloat(predictions[n].score) * 100)
-                + '% confidence.';
-            p.style = 'margin-left: ' + predictions[n].bbox[0] + 'px; margin-top: '
-                + (predictions[n].bbox[1] - 10) + 'px; width: '
-                + (predictions[n].bbox[2] - 10) + 'px; top: 0; left: 0;';
+        const highlighter = document.createElement("div");
+        highlighter.setAttribute("class", "highlighter");
+        highlighter.style =
+          "left: " +
+          dx +
+          "px; top: " +
+          dy +
+          "px; width: " +
+          dw +
+          "px; height: " +
+          dh +
+          "px;";
 
-            const highlighter = document.createElement('div');
-            highlighter.setAttribute('class', 'highlighter');
-            highlighter.style = 'left: ' + predictions[n].bbox[0] + 'px; top: '
-                                        + predictions[n].bbox[1] + 'px; width: '
-                                        + predictions[n].bbox[2] + 'px; height: '
-                                        + predictions[n].bbox[3] + 'px;'
+        // Añadir al DOM
+        liveView.appendChild(highlighter);
+        liveView.appendChild(p);
+        children.push(highlighter);
+        children.push(p);
 
-            if (highlighter){
-              liveView.appendChild(highlighter);
-              liveView.appendChild(p);
-              children.push(highlighter);
-              children.push(p);
+        // Procesar la imagen detectada
+        const canvas = document.getElementById("canva");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, dx, dy, dw, dh, 0, 0, dw, dh);
 
-              let canvas = document.getElementById("canva");
-              var ctx = canvas.getContext('2d')
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              ctx.drawImage(video, dx, dy, dw, dh, 0, 0, dw, dh);
+        // Recortar y reescalar la tarjeta
+        const trimmedCanvas = trimCanvas(canvas);
+        const image_data_url = trimmedCanvas.toDataURL("image/png");
+        document.querySelector("#cardImg").src = image_data_url;
 
-
-              var trimmedCanvas = trimCanvas(canvas);
-
-              let image_data_url = trimmedCanvas.toDataURL('image/png');
-              document.querySelector("#cardImg").src = image_data_url;
-
-              let saveImgVar= document.querySelector("#cardImg").src
-
-              if (saveImgVar){
-                submitIdCard.style.display="block";
-
-                submitIdCard.addEventListener('click',()=>{submitCardFunc(saveImgVar)});
-
-                await sleep(1000);
-                }
-
-              else {
-                submitIdCard.style.display="none";
-                await sleep(1000);
-              }
-          }
+        // Mostrar botón para enviar si se detecta algo
+        if (image_data_url) {
+          submitIdCard.style.display = "block";
+          submitIdCard.onclick = () => submitCardFunc(image_data_url);
+        } else {
+          submitIdCard.style.display = "none";
         }
       }
     }
