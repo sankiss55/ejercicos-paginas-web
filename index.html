@@ -1,23 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCM</title>
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "700b89d9-e489-440e-8f03-e496efad0fa2",
-    });
-  });
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detección de Desenfoque</title>
+  <script src="https://docs.opencv.org/4.x/opencv.js"></script>
 </head>
-
 <body>
-     
-</body>
+  <h1>¿La imagen está borrosa?</h1>
+  <video id="video" width="640" height="480" autoplay></video>
+  <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+  <button id="capture">Capturar</button>
+  <p id="result">Esperando captura...</p>
 
+  <script>
+    // Configurar la cámara web
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const result = document.getElementById('result');
+    const captureButton = document.getElementById('capture');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => video.srcObject = stream)
+      .catch(err => console.error('Error al acceder a la cámara:', err));
+
+    // Función para calcular la variancia del Laplaciano
+    function isBlurry(image) {
+      const gray = new cv.Mat();
+      cv.cvtColor(image, gray, cv.COLOR_RGBA2GRAY, 0);
+      const laplacian = new cv.Mat();
+      cv.Laplacian(gray, laplacian, cv.CV_64F);
+      const mean = new cv.Mat();
+      const stddev = new cv.Mat();
+      cv.meanStdDev(laplacian, mean, stddev);
+      const variance = Math.pow(stddev.data64F[0], 2);
+      gray.delete();
+      laplacian.delete();
+      mean.delete();
+      stddev.delete();
+      return variance;
+    }
+
+    // Capturar una foto y analizar el desenfoque
+    captureButton.addEventListener('click', () => {
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Procesar con OpenCV
+      const src = cv.imread(canvas);
+      const variance = isBlurry(src);
+      src.delete();
+
+      // Evaluar si está borrosa
+      const threshold = 100; // Umbral ajustable
+      if (variance < threshold) {
+        result.textContent = `La imagen está borrosa (Varianza: ${variance.toFixed(2)})`;
+      } else {
+        result.textContent = `La imagen está clara (Varianza: ${variance.toFixed(2)})`;
+      }
+    });
+  </script>
+</body>
 </html>
