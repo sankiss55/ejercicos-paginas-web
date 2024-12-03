@@ -1,77 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detección de desenfoque</title>
-  <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
-  <style>
-    video, canvas {
-      display: block;
-      margin: 10px auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detección de Desenfoque</title>
+    <script src="https://docs.opencv.org/4.x/opencv.js"></script>
 </head>
 <body>
-  <video id="video" autoplay playsinline width="640" height="480"></video>
-  <canvas id="canvas" width="640" height="480"></canvas>
-  <p id="status">Estado: Detectando...</p>
+    <h1>Prueba de desenfoque</h1>
+    <video id="video" autoplay muted></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <p id="status">Cargando...</p>
+    <p id="error" style="color: red;"></p>
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const status = document.getElementById('status');
+        const errorElement = document.getElementById('error');
+        const ctx = canvas.getContext('2d');
 
-  <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const statusText = document.getElementById('status');
-    const ctx = canvas.getContext('2d');
-
-    // Iniciar la cámara
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
-        video.srcObject = stream;
-      })
-      .catch(err => console.error('Error al acceder a la cámara:', err));
-
-    // Procesar el vídeo cuando OpenCV esté listo
-    video.addEventListener('play', () => {
-      const cap = new cv.VideoCapture(video);
-
-      function processVideo() {
-        if (!video.paused && !video.ended) {
-          const src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
-          const gray = new cv.Mat();
-          const dst = new cv.Mat();
-
-          cap.read(src); // Captura el fotograma
-          cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY); // Convierte a escala de grises
-
-          // Aplica el Laplaciano para detectar desenfoque
-          cv.Laplacian(gray, dst, cv.CV_64F);
-          const meanStdDev = new cv.Mat();
-          cv.meanStdDev(dst, meanStdDev);
-
-          const variance = meanStdDev.data64F[1]; // Varianza del laplaciano
-
-          // Determinar si está desenfocado
-          if (variance < 100) { // Ajusta el umbral según tus necesidades
-            statusText.textContent = 'Estado: Desenfocado';
-          } else {
-            statusText.textContent = 'Estado: Enfocado';
-          }
-
-          // Muestra el vídeo en el canvas
-          cv.imshow(canvas, src);
-
-          // Liberar memoria
-          src.delete();
-          gray.delete();
-          dst.delete();
-          meanStdDev.delete();
-
-          requestAnimationFrame(processVideo);
+        // Inicia la cámara web
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.onloadedmetadata = () => video.play();
+                errorElement.textContent = ''; // Limpia cualquier error previo
+            } catch (err) {
+                errorElement.textContent = 'Error al acceder a la cámara: ' + err.message;
+                status.textContent = 'No se puede analizar la imagen.';
+            }
         }
-      }
 
-      processVideo();
-    });
-  </script>
+        // Detecta si la imagen está desenfocada
+        function checkBlur() {
+            try {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convierte la imagen de la cámara a un formato que OpenCV pueda usar
+                const src = cv.imread(canvas);
+                const gray = new cv.Mat();
+                cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+
+                // Aplica la transformada de Laplace para medir bordes
+                const laplacian = new cv.Mat();
+                cv.Laplacian(gray, laplacian, cv.CV_64F);
+
+                // Calcula la varianza de los valores de Laplace
+                const mean = new cv.Mat();
+                const stddev = new cv.Mat();
+                cv.meanStdDev(laplacian, mean, stddev);
+
+                const variance = Math.pow(stddev.data64F[0], 2);
+                status.textContent = variance < 100 ? 'Imagen desenfocada' : 'Imagen enfocada';
+
+                // Libera memoria
+                src.delete();
+                gray.delete();
+                laplacian.delete();
+                mean.delete();
+                stddev.delete();
+            } catch (err) {
+                errorElement.textContent = 'Error al analizar la imagen: ' + err.message;
+            }
+        }
+
+        // Llama a la detección de desenfoque cada cierto tiempo
+        async function init() {
+            await startCamera();
+            setInterval(checkBlur, 1000); // Revisa cada segundo
+        }
+
+        init();
+    </script>
 </body>
 </html>
