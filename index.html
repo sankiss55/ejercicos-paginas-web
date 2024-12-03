@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detección de Desenfoque</title>
+  <title>Detección de Desenfoque en Múltiples Imágenes</title>
   <script src="https://docs.opencv.org/4.x/opencv.js"></script>
 </head>
 <body>
-  <h1>¿La imagen está borrosa?</h1>
+  <h1>¿Están borrosas las imágenes?</h1>
   <video id="video" width="640" height="480" autoplay></video>
   <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-  <button id="capture">Capturar</button>
-  <p id="result">Esperando captura...</p>
+  <button id="capture">Capturar 5 Imágenes</button>
+  <ul id="results">Esperando captura...</ul>
 
   <script>
     // Configurar la cámara web
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
-    const result = document.getElementById('result');
+    const results = document.getElementById('results');
     const captureButton = document.getElementById('capture');
 
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -25,7 +25,7 @@
       .catch(err => console.error('Error al acceder a la cámara:', err));
 
     // Función para calcular la variancia del Laplaciano
-    function isBlurry(image) {
+    function calculateVariance(image) {
       const gray = new cv.Mat();
       cv.cvtColor(image, gray, cv.COLOR_RGBA2GRAY, 0);
       const laplacian = new cv.Mat();
@@ -41,25 +41,42 @@
       return variance;
     }
 
-    // Capturar una foto y analizar el desenfoque
+    // Capturar y evaluar 5 imágenes
     captureButton.addEventListener('click', () => {
+      results.innerHTML = 'Capturando imágenes...';
       const ctx = canvas.getContext('2d');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // Procesar con OpenCV
-      const src = cv.imread(canvas);
-      const variance = isBlurry(src);
-      src.delete();
-
-      // Evaluar si está borrosa
+      const captureCount = 5;
+      const delay = 500; // 500ms entre capturas
       const threshold = 100; // Umbral ajustable
-      if (variance < threshold) {
-        result.textContent = `La imagen está borrosa (Varianza: ${variance.toFixed(2)})`;
-      } else {
-        result.textContent = `La imagen está clara (Varianza: ${variance.toFixed(2)})`;
-      }
+      let capturedImages = 0;
+
+      const captureInterval = setInterval(() => {
+        if (capturedImages >= captureCount) {
+          clearInterval(captureInterval);
+          return;
+        }
+
+        // Captura de imagen
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const src = cv.imread(canvas);
+
+        // Procesar y analizar
+        const variance = calculateVariance(src);
+        src.delete();
+
+        // Evaluar desenfoque
+        const resultText = variance < threshold
+          ? `Imagen ${capturedImages + 1}: Borrosa (Varianza: ${variance.toFixed(2)})`
+          : `Imagen ${capturedImages + 1}: Clara (Varianza: ${variance.toFixed(2)})`;
+
+        const listItem = document.createElement('li');
+        listItem.textContent = resultText;
+        results.appendChild(listItem);
+
+        capturedImages++;
+      }, delay);
     });
   </script>
 </body>
