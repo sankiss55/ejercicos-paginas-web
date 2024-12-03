@@ -11,7 +11,10 @@
   <video id="video" width="640" height="480" autoplay></video>
   <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
   <button id="capture">Capturar 5 Imágenes</button>
-  <ul id="results">Esperando captura...</ul>
+  <div id="results">
+    <h2>Resultados:</h2>
+    <p>Esperando captura...</p>
+  </div>
 
   <script>
     // Configurar la cámara web
@@ -43,7 +46,7 @@
 
     // Capturar y evaluar 5 imágenes
     captureButton.addEventListener('click', () => {
-      results.innerHTML = 'Capturando imágenes...';
+      results.innerHTML = '<h2>Resultados:</h2>';
       const ctx = canvas.getContext('2d');
       const captureCount = 5;
       const delay = 500; // 500ms entre capturas
@@ -71,9 +74,20 @@
           ? `Imagen ${capturedImages + 1}: Borrosa (Varianza: ${variance.toFixed(2)})`
           : `Imagen ${capturedImages + 1}: Clara (Varianza: ${variance.toFixed(2)})`;
 
-        const listItem = document.createElement('li');
-        listItem.textContent = resultText;
-        results.appendChild(listItem);
+        // Mostrar imagen y resultado
+        const img = new Image();
+        img.src = canvas.toDataURL();
+        img.width = 320;
+        img.height = 240;
+
+        const resultDiv = document.createElement('div');
+        resultDiv.style.marginBottom = '10px';
+        const caption = document.createElement('p');
+        caption.textContent = resultText;
+
+        resultDiv.appendChild(img);
+        resultDiv.appendChild(caption);
+        results.appendChild(resultDiv);
 
         capturedImages++;
       }, delay);
