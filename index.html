@@ -3,128 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Desenfoque y Movimiento</title>
-  <script src="https://docs.opencv.org/4.x/opencv.js"></script>
+  <title>Detección de desenfoque</title>
+  <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+  <style>
+    video, canvas {
+      display: block;
+      margin: 10px auto;
+    }
+  </style>
 </head>
 <body>
-  <h1>¿Están borrosas o en movimiento las imágenes?</h1>
-  <video id="video" width="640" height="480" autoplay></video>
-  <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-  <button id="capture">Capturar 5 Imágenes</button>
-  <div id="results">
-    <h2>Resultados:</h2>
-    <p>Esperando captura...</p>
-  </div>
+  <video id="video" autoplay playsinline width="640" height="480"></video>
+  <canvas id="canvas" width="640" height="480"></canvas>
+  <p id="status">Estado: Detectando...</p>
 
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
-    const results = document.getElementById('results');
-    const captureButton = document.getElementById('capture');
+    const statusText = document.getElementById('status');
+    const ctx = canvas.getContext('2d');
 
-    // Inicia la cámara
+    // Iniciar la cámara
     navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => video.srcObject = stream)
+      .then(stream => {
+        video.srcObject = stream;
+      })
       .catch(err => console.error('Error al acceder a la cámara:', err));
 
-    // Función para calcular la variancia del Laplaciano
-    function calculateVariance(image) {
-      const gray = new cv.Mat();
-      cv.cvtColor(image, gray, cv.COLOR_RGBA2GRAY, 0);
-      const laplacian = new cv.Mat();
-      cv.Laplacian(gray, laplacian, cv.CV_64F);
-      const mean = new cv.Mat();
-      const stddev = new cv.Mat();
-      cv.meanStdDev(laplacian, mean, stddev);
-      const variance = Math.pow(stddev.data64F[0], 2);
-      gray.delete();
-      laplacian.delete();
-      mean.delete();
-      stddev.delete();
-      return variance;
-    }
+    // Procesar el vídeo cuando OpenCV esté listo
+    video.addEventListener('play', () => {
+      const cap = new cv.VideoCapture(video);
 
-    // Función para detectar desenfoque por movimiento
-    function detectMotionBlur(image) {
-      const gray = new cv.Mat();
-      cv.cvtColor(image, gray, cv.COLOR_RGBA2GRAY, 0);
+      function processVideo() {
+        if (!video.paused && !video.ended) {
+          const src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+          const gray = new cv.Mat();
+          const dst = new cv.Mat();
 
-      const sobelX = new cv.Mat();
-      const sobelY = new cv.Mat();
-      cv.Sobel(gray, sobelX, cv.CV_64F, 1, 0);
-      cv.Sobel(gray, sobelY, cv.CV_64F, 0, 1);
+          cap.read(src); // Captura el fotograma
+          cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY); // Convierte a escala de grises
 
-      // Magnitud del gradiente (dirección del movimiento)
-      const magnitude = new cv.Mat();
-      cv.magnitude(sobelX, sobelY, magnitude);
-      const mean = new cv.Mat();
-      const stddev = new cv.Mat();
-      cv.meanStdDev(magnitude, mean, stddev);
+          // Aplica el Laplaciano para detectar desenfoque
+          cv.Laplacian(gray, dst, cv.CV_64F);
+          const meanStdDev = new cv.Mat();
+          cv.meanStdDev(dst, meanStdDev);
 
-      const motionBlurScore = mean.data64F[0]; // Promedio de la magnitud
-      gray.delete();
-      sobelX.delete();
-      sobelY.delete();
-      magnitude.delete();
-      mean.delete();
-      stddev.delete();
-      return motionBlurScore;
-    }
+          const variance = meanStdDev.data64F[1]; // Varianza del laplaciano
 
-    // Capturar y evaluar 5 imágenes
-    captureButton.addEventListener('click', () => {
-      results.innerHTML = '<h2>Resultados:</h2>';
-      const ctx = canvas.getContext('2d');
-      const captureCount = 5;
-      const delay = 500; // 500ms entre capturas
-      const blurThreshold = 100; // Umbral para detectar desenfoque
-      const motionThreshold = 50; // Umbral para detectar movimiento
-      let capturedImages = 0;
+          // Determinar si está desenfocado
+          if (variance < 100) { // Ajusta el umbral según tus necesidades
+            statusText.textContent = 'Estado: Desenfocado';
+          } else {
+            statusText.textContent = 'Estado: Enfocado';
+          }
 
-      const captureInterval = setInterval(() => {
-        if (capturedImages >= captureCount) {
-          clearInterval(captureInterval);
-          return;
+          // Muestra el vídeo en el canvas
+          cv.imshow(canvas, src);
+
+          // Liberar memoria
+          src.delete();
+          gray.delete();
+          dst.delete();
+          meanStdDev.delete();
+
+          requestAnimationFrame(processVideo);
         }
+      }
 
-        // Captura de imagen
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const src = cv.imread(canvas);
-
-        // Evaluar desenfoque y movimiento
-        const variance = calculateVariance(src);
-        const motionScore = detectMotionBlur(src);
-        src.delete();
-
-        // Determinar estado
-        let resultText = `Imagen ${capturedImages + 1}: `;
-        if (variance < blurThreshold) {
-          resultText += `Borrosa (Varianza: ${variance.toFixed(2)})`;
-        } else if (motionScore > motionThreshold) {
-          resultText += `Con movimiento (Movimiento: ${motionScore.toFixed(2)})`;
-        } else {
-          resultText += `Clara (Varianza: ${variance.toFixed(2)}, Movimiento: ${motionScore.toFixed(2)})`;
-        }
-
-        // Mostrar imagen y resultado
-        const img = new Image();
-        img.src = canvas.toDataURL();
-        img.width = 320;
-        img.height = 240;
-
-        const resultDiv = document.createElement('div');
-        resultDiv.style.marginBottom = '10px';
-        const caption = document.createElement('p');
-        caption.textContent = resultText;
-
-        resultDiv.appendChild(img);
-        resultDiv.appendChild(caption);
-        results.appendChild(resultDiv);
-
-        capturedImages++;
-      }, delay);
+      processVideo();
     });
   </script>
 </body>
