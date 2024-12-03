@@ -8,70 +8,108 @@
 </head>
 <body>
     <h1>Prueba de desenfoque</h1>
+    <label for="cameraSelect">Selecciona una cámara:</label>
+    <select id="cameraSelect"></select>
     <video id="video" autoplay muted></video>
     <canvas id="canvas" style="display: none;"></canvas>
     <p id="status">Cargando...</p>
-    <p id="error" style="color: red;"></p>
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const status = document.getElementById('status');
-        const errorElement = document.getElementById('error');
+        const cameraSelect = document.getElementById('cameraSelect');
         const ctx = canvas.getContext('2d');
+        let currentStream = null;
 
-        // Inicia la cámara web
-        async function startCamera() {
+        // Lista las cámaras disponibles
+        async function listCameras() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                if (videoDevices.length === 0) {
+                    throw new Error('No se encontraron cámaras.');
+                }
+
+                cameraSelect.innerHTML = '';
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.textContent = device.label || `Cámara ${index + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+
+                // Usa la primera cámara por defecto
+                startCamera(videoDevices[0].deviceId);
+            } catch (err) {
+                status.textContent = 'Error al listar cámaras: ' + err.message;
+            }
+        }
+
+        // Inicia la cámara seleccionada
+        async function startCamera(deviceId) {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: deviceId } }
+                });
+                currentStream = stream;
                 video.srcObject = stream;
                 video.onloadedmetadata = () => video.play();
-                errorElement.textContent = ''; // Limpia cualquier error previo
+                status.textContent = 'Cámara iniciada. Analizando enfoque...';
             } catch (err) {
-                errorElement.textContent = 'Error al acceder a la cámara: ' + err.message;
-                status.textContent = 'No se puede analizar la imagen.';
+                status.textContent = 'Error al acceder a la cámara: ' + err.message;
             }
         }
 
         // Detecta si la imagen está desenfocada
         function checkBlur() {
-            try {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                // Convierte la imagen de la cámara a un formato que OpenCV pueda usar
-                const src = cv.imread(canvas);
-                const gray = new cv.Mat();
-                cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-
-                // Aplica la transformada de Laplace para medir bordes
-                const laplacian = new cv.Mat();
-                cv.Laplacian(gray, laplacian, cv.CV_64F);
-
-                // Calcula la varianza de los valores de Laplace
-                const mean = new cv.Mat();
-                const stddev = new cv.Mat();
-                cv.meanStdDev(laplacian, mean, stddev);
-
-                const variance = Math.pow(stddev.data64F[0], 2);
-                status.textContent = variance < 100 ? 'Imagen desenfocada' : 'Imagen enfocada';
-
-                // Libera memoria
-                src.delete();
-                gray.delete();
-                laplacian.delete();
-                mean.delete();
-                stddev.delete();
-            } catch (err) {
-                errorElement.textContent = 'Error al analizar la imagen: ' + err.message;
+            if (!video.videoWidth || !video.videoHeight) {
+                return;
             }
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convierte la imagen de la cámara a un formato que OpenCV pueda usar
+            const src = cv.imread(canvas);
+            const gray = new cv.Mat();
+            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+
+            // Aplica la transformada de Laplace para medir bordes
+            const laplacian = new cv.Mat();
+            cv.Laplacian(gray, laplacian, cv.CV_64F);
+
+            // Calcula la varianza de los valores de Laplace
+            const mean = new cv.Mat();
+            const stddev = new cv.Mat();
+            cv.meanStdDev(laplacian, mean, stddev);
+
+            const variance = Math.pow(stddev.data64F[0], 2);
+            status.textContent = variance < 100 ? 'Imagen desenfocada' : 'Imagen enfocada';
+
+            // Libera memoria
+            src.delete();
+            gray.delete();
+            laplacian.delete();
+            mean.delete();
+            stddev.delete();
         }
 
-        // Llama a la detección de desenfoque cada cierto tiempo
+        // Llama a la detección de desenfoque cada segundo
         async function init() {
-            await startCamera();
+            await listCameras();
             setInterval(checkBlur, 1000); // Revisa cada segundo
         }
+
+        // Cambia la cámara al seleccionar una nueva
+        cameraSelect.addEventListener('change', () => {
+            startCamera(cameraSelect.value);
+        });
 
         init();
     </script>
