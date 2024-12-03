@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detección de Desenfoque en Múltiples Imágenes</title>
+  <title>Desenfoque y Movimiento</title>
   <script src="https://docs.opencv.org/4.x/opencv.js"></script>
 </head>
 <body>
-  <h1>¿Están borrosas las imágenes?</h1>
+  <h1>¿Están borrosas o en movimiento las imágenes?</h1>
   <video id="video" width="640" height="480" autoplay></video>
   <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
   <button id="capture">Capturar 5 Imágenes</button>
@@ -17,12 +17,12 @@
   </div>
 
   <script>
-    // Configurar la cámara web
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const results = document.getElementById('results');
     const captureButton = document.getElementById('capture');
 
+    // Inicia la cámara
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => video.srcObject = stream)
       .catch(err => console.error('Error al acceder a la cámara:', err));
@@ -44,13 +44,41 @@
       return variance;
     }
 
+    // Función para detectar desenfoque por movimiento
+    function detectMotionBlur(image) {
+      const gray = new cv.Mat();
+      cv.cvtColor(image, gray, cv.COLOR_RGBA2GRAY, 0);
+
+      const sobelX = new cv.Mat();
+      const sobelY = new cv.Mat();
+      cv.Sobel(gray, sobelX, cv.CV_64F, 1, 0);
+      cv.Sobel(gray, sobelY, cv.CV_64F, 0, 1);
+
+      // Magnitud del gradiente (dirección del movimiento)
+      const magnitude = new cv.Mat();
+      cv.magnitude(sobelX, sobelY, magnitude);
+      const mean = new cv.Mat();
+      const stddev = new cv.Mat();
+      cv.meanStdDev(magnitude, mean, stddev);
+
+      const motionBlurScore = mean.data64F[0]; // Promedio de la magnitud
+      gray.delete();
+      sobelX.delete();
+      sobelY.delete();
+      magnitude.delete();
+      mean.delete();
+      stddev.delete();
+      return motionBlurScore;
+    }
+
     // Capturar y evaluar 5 imágenes
     captureButton.addEventListener('click', () => {
       results.innerHTML = '<h2>Resultados:</h2>';
       const ctx = canvas.getContext('2d');
       const captureCount = 5;
       const delay = 500; // 500ms entre capturas
-      const threshold = 100; // Umbral ajustable
+      const blurThreshold = 100; // Umbral para detectar desenfoque
+      const motionThreshold = 50; // Umbral para detectar movimiento
       let capturedImages = 0;
 
       const captureInterval = setInterval(() => {
@@ -65,14 +93,20 @@
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const src = cv.imread(canvas);
 
-        // Procesar y analizar
+        // Evaluar desenfoque y movimiento
         const variance = calculateVariance(src);
+        const motionScore = detectMotionBlur(src);
         src.delete();
 
-        // Evaluar desenfoque
-        const resultText = variance < threshold
-          ? `Imagen ${capturedImages + 1}: Borrosa (Varianza: ${variance.toFixed(2)})`
-          : `Imagen ${capturedImages + 1}: Clara (Varianza: ${variance.toFixed(2)})`;
+        // Determinar estado
+        let resultText = `Imagen ${capturedImages + 1}: `;
+        if (variance < blurThreshold) {
+          resultText += `Borrosa (Varianza: ${variance.toFixed(2)})`;
+        } else if (motionScore > motionThreshold) {
+          resultText += `Con movimiento (Movimiento: ${motionScore.toFixed(2)})`;
+        } else {
+          resultText += `Clara (Varianza: ${variance.toFixed(2)}, Movimiento: ${motionScore.toFixed(2)})`;
+        }
 
         // Mostrar imagen y resultado
         const img = new Image();
