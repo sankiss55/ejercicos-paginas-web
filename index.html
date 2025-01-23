@@ -1,29 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyScript Example</title>
-    <!-- Importar PyScript -->
-    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css">
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('7dabf81706551699d47a', {
+      cluster: 'us2'
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      alert(JSON.stringify(data));
+    });
+  </script>
 </head>
 <body>
-    <h1>Hola, PyScript!</h1>
-    <p>Este es un ejemplo de cómo ejecutar Python en una página web.</p>
-
-    <!-- Contenedor para la salida de PyScript -->
-    <div id="output"></div>
-
-    <!-- Script de PyScript -->
-    <py-script>
-        from datetime import datetime
-
-        now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-
-        # Mostrar la hora actual en el contenedor de salida
-        display("La hora actual es: " + current_time, target="output")
-    </py-script>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
 </body>
-</html>
