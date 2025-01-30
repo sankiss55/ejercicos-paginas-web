@@ -1,26 +1,37 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
-  <title>Pusher Test</title>
-  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-  <script>
-
-    // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
-
-    var pusher = new Pusher('7dabf81706551699d47a', {
-      cluster: 'us2'
-    });
-
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('my-event', function(data) {
-      alert(JSON.stringify(data));
-    });
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneSignal User ID</title>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
 </head>
 <body>
-  <h1>Pusher Test</h1>
-  <p>
-    Try publishing an event to channel <code>my-channel</code>
-    with event name <code>my-event</code>.
-  </p>
+
+    <script>
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(function() {
+            OneSignal.init({
+                appId: "0c659218-a807-4d73-878a-c184031fd78b",
+                notifyButton: {
+                    enable: true
+                },
+                serviceWorkerPath: "OneSignalSDKWorker.js",
+            });
+
+            // Obtener el ID del usuario
+            OneSignal.getUserId().then(function(userId) {
+                if (userId) {
+                    alert("User ID: " + userId);
+                    // Aquí puedes enviarlo a tu backend si lo necesitas
+                } else {
+                    alert("El usuario aún no está suscrito.");
+                }
+            }).catch(function(error) {
+                alert("Error al obtener el User ID: " + error);
+            });
+        });
+    </script>
+
 </body>
+</html>
