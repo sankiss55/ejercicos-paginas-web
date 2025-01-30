@@ -16,7 +16,8 @@
         OneSignal.push(function() {
             OneSignal.init({
                 appId: "0c659218-a807-4d73-878a-c184031fd78b",
-                notifyButton: { enable: true } // Botón de suscripción flotante
+                notifyButton: { enable: true }, // Botón de suscripción flotante
+                 serviceWorkerPath: "/ejercicos-paginas-web/OneSignalSDKWorker.js"
             });
 
             // Detectar cambios en la suscripción
