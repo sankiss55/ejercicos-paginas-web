@@ -19,12 +19,12 @@
         });
         OneSignal.getUserId().then(function(userId) {
             if (userId) {
-                console.log("User ID:", userId);
+                alert("User ID:", userId);
             } else {
-                console.log("El usuario aún no está suscrito.");
+                alert("El usuario aún no está suscrito.");
             }
         }).catch(function(error) {
-            console.error("Error al obtener el User ID:", error);
+            alert("Error al obtener el User ID:", error);
         });
     });
 </script>
