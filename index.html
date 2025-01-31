@@ -2,49 +2,43 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notificaciones Push</title>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
 </head>
 <body>
-
-    <h1>Suscripción a Notificaciones</h1>
-    <button id="subscribeBtn">Suscribirse</button>
-
+    <button id="subscribe-btn">Activar notificaciones</button>
     <script>
-        var OneSignal = window.OneSignal || [];
-        OneSignal.push(function() {
-            OneSignal.init({
-                appId: "0c659218-a807-4d73-878a-c184031fd78b",
-                notifyButton: { enable: true }, // Botón de suscripción flotante
-                 serviceWorkerPath: "/ejercicos-paginas-web/OneSignalSDKWorker.js"
-            });
+        // Registrar el Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(function (registration) {
+                    alert('Service Worker registrado con éxito.');
+                })
+                .catch(function (error) {
+                    alert('Error al registrar el Service Worker: ' + error);
+                });
+        }
 
-            // Detectar cambios en la suscripción
-            OneSignal.on('subscriptionChange', function(isSubscribed) {
-                if (isSubscribed) {
-                    OneSignal.getUserId().then(function(userId) {
-                        alert(`✅ Usuario suscrito con ID: ${userId}`);
-                    });
-                } else {
-                    alert("⚠️ El usuario canceló la suscripción.");
-                }
-            });
-
-            // Verificar si ya está suscrito
-            OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
-                if (isEnabled) {
-                    OneSignal.getUserId().then(function(userId) {
-                        alert(`🔔 Ya estás suscrito. Tu ID: ${userId}`);
-                    });
-                } else {
-                    document.getElementById("subscribeBtn").addEventListener("click", function() {
-                        OneSignal.registerForPushNotifications();
-                    });
-                }
-            });
+        // Suscribir al usuario
+        document.getElementById('subscribe-btn').addEventListener('click', function () {
+            if ('Notification' in window && 'PushManager' in window) {
+                Notification.requestPermission().then(function (permission) {
+                    if (permission === 'granted') {
+                        navigator.serviceWorker.ready.then(function (registration) {
+                            registration.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: 'BJiOyJkuBpbpGBsiLKOqPcYP3eEnypNoWOrh69R59rGGw88yMl3ex03UTdiysQwvxfpzHPF-5aQjWxNsFGYoz-o' // Tu clave pública VAPID
+                            }).then(function (subscription) {
+                                alert('Usuario suscrito: ' + JSON.stringify(subscription));
+                                // Envía los datos de suscripción al servidor (PHP)
+                                
+                            });
+                        });
+                    }
+                });
+            } else {
+                alert('Tu navegador no soporta notificaciones push.');
+            }
         });
     </script>
-
 </body>
 </html>
