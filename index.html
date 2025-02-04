@@ -1,44 +1,87 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Notificaciones Push</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabajar con reas.sqlite</title>
 </head>
 <body>
-    <button id="subscribe-btn">Activar notificaciones</button>
+    <h1>Acceder a la base de datos reas.sqlite</h1>
+
+    <!-- Formulario para insertar datos -->
+    <form id="dataForm">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="value">Valor:</label>
+        <input type="number" id="value" name="value" step="0.1" required>
+        <br>
+        <button type="submit">Insertar</button>
+    </form>
+
+    <h2>Datos en la base de datos:</h2>
+    <pre id="output"></pre>
+
+    <!-- Incluir SQL.js desde el CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
     <script>
-        // Registrar el Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/ejercicos-paginas-web/service-worker.js')
-                .then(function (registration) {
-                    alert('Service Worker registrado con éxito.');
-                })
-                .catch(function (error) {
-                    alert('Error al registrar el Service Worker: ' + error);
+        let db;
+
+        // Cargar la base de datos reas.sqlite
+        async function cargarBaseDeDatos() {
+            try {
+                // Obtener el archivo de la base de datos
+                const response = await fetch('reas.sqlite');
+                const arrayBuffer = await response.arrayBuffer();
+                const uint8Array = new Uint8Array(arrayBuffer);
+
+                // Inicializar SQL.js y cargar la base de datos
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
                 });
+                db = new SQL.Database(uint8Array);
+                console.log("Base de datos cargada correctamente.");
+
+                // Mostrar los datos actuales de la tabla
+                mostrarDatos();
+            } catch (error) {
+                console.error("Error al cargar la base de datos:", error);
+            }
         }
 
-        // Suscribir al usuario
-        document.getElementById('subscribe-btn').addEventListener('click', function () {
-            if ('Notification' in window && 'PushManager' in window) {
-                Notification.requestPermission().then(function (permission) {
-                    if (permission === 'granted') {
-                        navigator.serviceWorker.ready.then(function (registration) {
-                            registration.pushManager.subscribe({
-                                userVisibleOnly: true,
-                                applicationServerKey: 'BJiOyJkuBpbpGBsiLKOqPcYP3eEnypNoWOrh69R59rGGw88yMl3ex03UTdiysQwvxfpzHPF-5aQjWxNsFGYoz-o' // Tu clave pública VAPID
-                            }).then(function (subscription) {
-                                alert('Usuario suscrito: ' + JSON.stringify(subscription));
-                                // Envía los datos de suscripción al servidor (PHP)
-                                
-                            });
-                        });
-                    }
-                });
-            } else {
-                alert('Tu navegador no soporta notificaciones push.');
-            }
+        // Manejar el envío del formulario
+        document.getElementById('dataForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar que el formulario se envíe
+
+            // Obtener los valores del formulario
+            const name = document.getElementById('name').value;
+            const value = parseFloat(document.getElementById('value').value);
+
+            // Insertar los valores en la base de datos
+            db.run("INSERT INTO reas (name, value) VALUES (?, ?);", [name, value]);
+
+            // Mostrar los datos actualizados
+            mostrarDatos();
+
+            // Limpiar el formulario
+            document.getElementById('dataForm').reset();
         });
+
+        // Función para mostrar los datos de la tabla 'reas'
+        function mostrarDatos() {
+            const result = db.exec("SELECT * FROM reas;");
+            const output = document.getElementById('output');
+
+            if (result.length > 0) {
+                // Convertir los resultados a una cadena legible
+                output.textContent = JSON.stringify(result[0].values, null, 2);
+            } else {
+                output.textContent = "No hay datos en la tabla.";
+            }
+        }
+
+        // Cargar la base de datos al iniciar la página
+        cargarBaseDeDatos();
     </script>
 </body>
 </html>
