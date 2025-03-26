@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital@1&family=Kumbh+Sans:wght@100..900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <title>Frontend Mentor | E-commerce product page</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+<script src="https://unpkg.com/js-image-zoom@0.7.0/js-image-zoom.js" type="application/javascript"></script>
+
+  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <style>
+   
+  </style>
+</head>
+<body>
+  <div id="container">
+<header>
+  <nav>
+<h1>sneakers</h1>
+<div id="nav_button">
+  <button>
+    Collections
+    </button>
+    <button>
+      Men
+    </button>
+    <button>
+      Women 
+    </button>
+    <button>
+      About
+    </button>
+    <button>
+      Contact
+    </button>
+</div>
+<div id="info_compra">
+  <span>0</span>
+  <button onclick="ver_carrito()" id="cars" title="Carrito" >
+<img src="images/icon-cart.svg" alt="carrito">
+  </button>
+  <button id="user" title="Usuario">
+<img src="images/image-avatar.png" alt="usuario">
+  </button>
+</div>
+  </nav>
+</header>
+  <main>
+    <section id="section_product" >
+    <div id="product_container">
+      <div id="div_product_container">
+        <div id="ver_imagen_grande"> <span class="material-symbols-outlined">
+          search
+      </span></div>
+       
+        <img id="img_view" src="images/image-product-1.jpg" alt="">
+       </div>
+       <div id="div_products_all">
+        <div>
+          <img class="img_selct" style="opacity: 0.6;" src="images/image-product-1.jpg" alt=""></div>
+<div><img class="img_selct" src="images/image-product-2.jpg" alt=""></div>
+<div><img class="img_selct" src="images/image-product-3.jpg" alt=""></div>
+<div><img class="img_selct" src="images/image-product-4.jpg" alt=""></div>
+       </div>
+    </div>
+    </section>
+    <section id="section_info">
+      <div>
+        <b>SNEAKER COMPANY </b>
+        <h1>Fall Limited Edition Sneakers </h1>
+        <p>
+          These low-profile sneakers are your perfect casual wear. companion. Featuring a durable rubber outer sole, they'll withstand everything the weather can offer. 
+        </p>
+        <h3>$125.00 
+          <strong>50% </strong></h3>
+        <p><s>$250.00 </s></p>
+      </div>
+      <div id="cantidad_product">
+        <div>
+          <button onclick="disminuir_carrito()"><img src="images/icon-minus.svg" alt=""></button>
+          <p id="cantidad">0</p>
+          <button onclick="agregar_carrito()"><img src="images/icon-plus.svg" alt=""></button>
+        </div>
+        <button id="add">Add to cart</button>
+      </div>
+    </section>
+  </main>
+  <section id="ventana_cart">
+    <div><b>Cart</b></div>
+    <div>
+      <p id="text_empty" style="color: black; text-align: center; width: 100%; height: 100%;"  >Your cart is empty</p>
+      <img class="produc_apartado" src="images/image-product-1.jpg" alt="Product">
+      <p class="produc_apartado" style="color: black;">Fall Limited Edition Sneakers 
+        <span id="span_cantidad"></span>
+      </p>
+
+      <button onclick="borrar_datos('none', 'block', true)" class="produc_apartado" title="Borrar"><img src="images/icon-delete.svg" alt="Delete"></button>
+     
+    </div>
+    <div>
+      <button class="produc_apartado">Checkout</button>
+    </div>
+  </section>
+  
+</div>
+<div id="div_product_popul_container">
+  <button>
+    <span class="material-symbols-outlined">
+    close
+    </span>
+  </button>
+  
+  <button  onclick="cambiar_img_menos()"><img src="images/icon-previous.svg" alt="">
+  </button>
+  <button onclick="cambiar_img()"><img src="images/icon-next.svg"  alt="">
+  </button>
+  <div id="div_product_popul_container_1">
+    
+  <div><img id="img_view_popul" src="images/image-product-1.jpg" alt=""></div>
+
+  <div>
+    
+    <div>
+      <img class="img_selct_popul" src="images/image-product-1.jpg" alt=""></div>
+<div><img class="img_selct_popul" src="images/image-product-2.jpg" alt=""></div>
+<div><img class="img_selct_popul"  src="images/image-product-3.jpg" alt=""></div>
+<div><img class="img_selct_popul"  src="images/image-product-4.jpg" alt=""></div>
+   </div>
+  </div>
+  </div>
+</div>
+<script defer src="main.js"></script>
+</body>
+</html>

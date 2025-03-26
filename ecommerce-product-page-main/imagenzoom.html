@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoom con Drift</title>
+
+    <!-- Incluye el CSS de Drift -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@imgix/drift-js@1.5.0/dist/Drift.min.css">
+</head>
+<body>
+    <div class="image-container" style="width: 500px; height: 500px;">
+        <!-- Esta es la imagen sobre la que se aplicará el zoom -->
+        <img src="images/image-product-1.jpg" alt="Imagen con zoom" class="drift-demo-trigger" style="width: 100%; height: auto;">
+    </div>
+
+    <!-- Incluye el script de Drift -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@imgix/drift-js@1.5.0/dist/Drift.min.js"></script>
+
+    <script>
+        // Inicializa Drift en la imagen
+        new Drift(document.querySelector('.drift-demo-trigger'), {
+            paneContainer: document.querySelector('.image-container'),  // Contenedor para la imagen y el pane de zoom
+            inlinePane: false,  // Configura el pane para que no se muestre inline (es decir, aparecerá flotante)
+            hoverBoundingBox: true  // Permite que el área de zoom se ajuste al área visible de la imagen
+        });
+    </script>
+</body>
+</html>
