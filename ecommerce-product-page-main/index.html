@@ -52,14 +52,19 @@
   </nav>
 </header>
   <main>
+    <button class="botonres_imagenes" id="btn1" onclick="cambiar_img_menos('.img_selct','img_view')"><
+    </button>
+    <button class="botonres_imagenes" id="btn2" onclick="cambiar_img('.img_selct','img_view')">> </button>
     <section id="section_product" >
     <div id="product_container">
       <div id="div_product_container">
         <div id="ver_imagen_grande"> <span class="material-symbols-outlined">
           search
       </span></div>
-       
+      
         <img id="img_view" src="images/image-product-1.jpg" alt="">
+         
+ 
        </div>
        <div id="div_products_all">
         <div>
@@ -116,9 +121,9 @@
     </span>
   </button>
   
-  <button  onclick="cambiar_img_menos()"><img src="images/icon-previous.svg" alt="">
+  <button  onclick="cambiar_img_menos('.img_selct_popul','img_view_popul')"><img src="images/icon-previous.svg" alt="">
   </button>
-  <button onclick="cambiar_img()"><img src="images/icon-next.svg"  alt="">
+  <button onclick="cambiar_img('.img_selct_popul','img_view_popul')"><img src="images/icon-next.svg"  alt="">
   </button>
   <div id="div_product_popul_container_1">
     

@@ -27,11 +27,15 @@
         
         info_compra_span.innerHTML=''+cantidad;
     }
-    document.addEventListener('click', function()
+    document.addEventListener('click', function(e)
 {
-    if(window.getComputedStyle(document.getElementById("ventana_cart")).display=='block'){
-        document.getElementById("ventana_cart").style.display='none';
+    if(!document.getElementById("ventana_cart").contains(e.target)){
+        if(window.getComputedStyle(document.getElementById("ventana_cart")).display=='block'){
+            document.getElementById("ventana_cart").style.display='none';
+        }
     }
+  
+    
     });
     function ver_carrito(){
        setTimeout(() => {
@@ -82,24 +86,26 @@ div_product_popul_container_close.addEventListener("click", function(){
     div_product_popul_container.style.display='none';
 });
 
-function cambiar_img_menos(){
-    let img_view_popul=document.getElementById("img_view_popul");
-    let img_selct_popul=document.querySelectorAll('.img_selct_popul')
-    for (let index = 0; index < img_selct_popul.length; index++) {
-        const element = img_selct_popul[index];
-        if(element.src==img_view_popul.src){
-            img_view_popul.src=img_selct_popul[index-1]?img_selct_popul[index-1].src : img_selct_popul[img_selct_popul.length-1].src;
-            activivar_opcacidity(img_selct_popul);
-            img_selct_popul[index-1]?img_selct_popul[index-1].style.opacity='0.6': img_selct_popul[img_selct_popul.length-1].style.opacity='0.6';
+function cambiar_img_menos(img_selcts, img_views){
+    //let img_view_popul=document.getElementById("img_view_popul");
+    let img_view=document.getElementById(img_views);
+    let img_selct=document.querySelectorAll(img_selcts);
+    //let img_selct_popul=document.querySelectorAll('.img_selct_popul');
+    for (let index = 0; index < img_selct.length; index++) {
+        const element = img_selct[index];
+        if(element.src==img_view.src){
+            img_view.src=img_selct[index-1]?img_selct[index-1].src : img_selct[img_selct.length-1].src;
+            activivar_opcacidity(img_selct);
+            img_selct[index-1]?img_selct[index-1].style.opacity='0.6': img_selct[img_selct.length-1].style.opacity='0.6';
             
             break;
         }
     }
 }
 
-function cambiar_img(){
-    let img_view_popul=document.getElementById("img_view_popul");
-    let img_selct_popul=document.querySelectorAll('.img_selct_popul')
+function cambiar_img(img_selcts, img_views){
+    let img_view_popul=document.getElementById(img_views);
+    let img_selct_popul=document.querySelectorAll(img_selcts)
     for (let index = 0; index < img_selct_popul.length; index++) {
         const element = img_selct_popul[index];
         if(element.src==img_view_popul.src){
