@@ -430,6 +430,9 @@ padding: 15px;
   display: none;
 }
 @media(max-width: 991px){
+  .botonres_imagenes{
+    display:block;  
+  }
   main{
     flex-direction: column;
   }
