@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Título y meta datos -->
+  <title>Sobre Nosotros | GRN Inversiones</title>
+  <meta name="description"
+    content="Conoce más sobre GRN Inversiones, tu aliado en asesoría inmobiliaria en Mérida, Yucatán y Quintana Roo. Más de 10 años de experiencia en compra, venta y renta de inmuebles.">
+  <meta name="keywords"
+    content="GRN Inversiones, asesoría inmobiliaria, compra venta renta inmuebles, Mérida, Yucatán, Quintana Roo">
+  <meta name="author" content="GRN Inversiones">
+  <!-- fav icon -->
+  <link rel="icon" href="public/images/favicon.ico" type="image/x-icon">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="public/css/style.css">
+  <!-- Bootstrap Icons para el muñequito -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <!-- AOS Animations -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <!-- Script Botón Usuario -->
+  <script src="public/js/btnUser.js"></script>
+  <script src="public/js/togglePassword.js"></script>
+  <!-- Particles.js -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <style>
+    :root {
+      --main-bg: #181a1b;
+      --main-bg-light: #232526;
+      --main-bg-glass: rgba(30, 32, 33, 0.92);
+      --main-text: #f5f5f5;
+      --main-accent-dark: #101820;
+      --main-card: #232526;
+      --main-border: #232526;
+      --main-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+      --card-radius: 32px;
+      --card-shadow: 0 8px 32px rgba(34, 48, 74, 0.10), 0 2px 8px rgba(0, 0, 0, 0.10);
+      --card-hover-shadow: 0 16px 48px rgba(34, 48, 74, 0.18), 0 8px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: var(--main-bg);
+      color: var(--main-text);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light-mode {
+      --main-bg: #f5f6fa;
+      --main-bg-light: #e9ecef;
+      --main-bg-glass: rgba(255, 255, 255, 0.92);
+      --main-text: #232526;
+      --main-card: #fff;
+      --main-border: #e0e7ef;
+      --main-shadow: 0 4px 24px rgba(34, 48, 74, 0.08);
+    }
+
+    /* NAVBAR BLANCO Y TEXTO OSCURO */
+    .navbar {
+      background: #fff !important;
+      box-shadow: var(--main-shadow);
+      border-radius: 0 0 24px 24px;
+      margin-bottom: 0;
+      backdrop-filter: blur(8px);
+      transition: background 0.3s;
+    }
+
+    .navbar .navbar-nav .nav-link {
+      color: #232526 !important;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .navbar .navbar-nav .nav-link:hover,
+    .navbar .navbar-nav .nav-link.active {
+      color: var(--main-accent) !important;
+    }
+
+    .theme-toggle-btn {
+      border: none;
+      background: transparent;
+      color: var(--main-accent);
+      font-size: 1.7rem;
+      margin-left: 1rem;
+      transition: color 0.3s;
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--main-accent-dark);
+    }
+
+    .navbar-brand img.logo {
+      filter: grayscale(1) brightness(1.1) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.10));
+    }
+
+    .hero-section {
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      background: none;
+      overflow: visible;
+      z-index: 1;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      z-index: 0;
+    }
+
+    .hero-glass {
+      position: relative;
+      z-index: 2;
+      background: var(--main-bg-glass);
+      border-radius: 32px;
+      box-shadow: var(--main-shadow);
+      backdrop-filter: blur(16px);
+      padding: 48px 40px 48px 40px;
+      margin-top: 40px;
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      color: var(--main-text);
+      border: 1px solid var(--main-border);
+    }
+
+    .hero-section .display-4 {
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--main-accent);
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .hero-section .lead {
+      font-size: 1.15rem;
+      margin-bottom: 32px;
+      color: var(--main-text);
+      font-weight: 500;
+    }
+
+    .hero-img {
+      max-width: 420px;
+      border-radius: 28px;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.22);
+      border: 4px solid rgba(255, 255, 255, 0.10);
+      margin-top: 24px;
+      filter: grayscale(0.15) brightness(0.97);
+      /* Añade fondo azul sobrio para la imagen en modo claro */
+      background: var(--main-accent);
+      /* Centra la imagen si es pequeña */
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    body.light-mode .hero-img {
+      background: var(--main-accent);
+    }
+
+    .service-card,
+    .property-card {
+      border: none;
+      border-radius: var(--card-radius);
+      background: var(--main-card);
+      /* Elimina gradiente oscuro, usa fondo sólido */
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(8px);
+      transition:
+        transform 0.25s cubic-bezier(.4, 2, .6, 1),
+        box-shadow 0.25s,
+        background 0.3s;
+      overflow: hidden;
+      position: relative;
+      color: var(--main-text);
+      padding: 2.2rem 1.5rem 1.5rem 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .service-card:hover,
+    .property-card:hover {
+      transform: translateY(-8px) scale(1.025);
+      box-shadow: var(--card-hover-shadow);
+      background: #1b1d1f;
+      /* Elimina color: white; para evitar sobrescribir variables */
+      border: none;
+    }
+    .service-card:hover h5,
+    .service-card:hover p,
+    .property-card:hover h5,
+    .property-card:hover p {
+      color: #fff !important;
+      opacity: 0.97;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+
+    .service-card .bi,
+    .property-card .bi {
+      filter: none;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--main-accent);
+      opacity: 0.95;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .service-card:hover .bi,
+    .property-card:hover .bi {
+      color: var(--main-accent-dark);
+      transform: scale(1.15);
+    }
+
+    .service-card h5,
+    .property-card h5,
+    .service-card p,
+    .property-card p {
+      color: var(--main-text);
+      opacity: 0.97;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .footer-clean {
+      /* Fondo más oscuro y sólido para mejor contraste */
+      background: #1a1d23;
+      color: #fff;
+      padding: 48px 0 0 0;
+      border-radius: 32px 32px 0 0;
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.14);
+      transition: background 0.3s;
+    }
+
+    body.light-mode .footer-clean {
+      background: #f5f6fa;
+      color: #232526;
+    }
+
+    .footer-clean a {
+      color: #f5f5f5;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+
+    body.light-mode .footer-clean a {
+      color: #22304a;
+    }
+
+    .footer-clean a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .social-icons a {
+      /* Por defecto: blanco para modo oscuro */
+      color: #fff;
+      margin: 0 12px;
+      opacity: 0.85;
+      transition: opacity 0.2s, transform 0.25s cubic-bezier(.4, 2, .6, 1), color 0.2s;
+      font-size: 1.9rem;
+      display: inline-block;
+      will-change: transform;
+    }
+
+    /* En modo claro: azul */
+    body.light-mode .social-icons a {
+      color: #22304a !important;
+    }
+
+    .social-icons a:hover {
+      opacity: 1;
+      transform: scale(1.22) translateY(-6px) rotate(-4deg);
+      color: var(--main-accent-dark) !important;
+      animation: bounce 0.5s;
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: scale(1.22) translateY(-6px) rotate(-4deg);
+      }
+
+      30% {
+        transform: scale(1.32) translateY(-18px) rotate(-4deg);
+      }
+
+      60% {
+        transform: scale(1.18) translateY(-8px) rotate(-4deg);
+      }
+
+      100% {
+        transform: scale(1.22) translateY(-6px) rotate(-4deg);
+      }
+    }
+
+    /* Animaciones extra */
+    [data-aos] {
+      will-change: transform, opacity;
+    }
+
+    .btn-glass {
+      background: transparent;
+      color: var(--main-accent);
+      border: 2px solid var(--main-accent);
+      border-radius: 18px;
+      font-weight: 600;
+      padding: 12px 32px;
+      transition: background 0.2s, color 0.2s, border 0.2s;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .btn-glass:hover {
+      background: var(--main-accent);
+      color: #fff;
+      border: 2px solid var(--main-accent-dark);
+    }
+
+    /* Forzar textos secundarios a blanco en modo oscuro */
+    .text-muted {
+      color: #fff !important;
+      opacity: 0.8;
+      transition: color 0.2s;
+    }
+
+    body.light-mode .text-muted {
+      color: #232526 !important;
+      opacity: 0.7;
+    }
+
+    /* Responsive */
+    @media (max-width: 991px) {
+      .hero-glass {
+        padding: 32px 12px;
+      }
+
+      .hero-img {
+        max-width: 90vw;
+      }
+    }
+
+    .p-4.bg-white.rounded.shadow-sm.h-100 {
+      background: rgba(255, 255, 255, 0.97) !important;
+      color: #232526 !important;
+    }
+
+    .p-4.bg-white.rounded.shadow-sm.h-100 h4,
+    .p-4.bg-white.rounded.shadow-sm.h-100 ul,
+    .p-4.bg-white.rounded.shadow-sm.h-100 li {
+      color: #232526 !important;
+    }
+
+    .p-4.bg-white.rounded.shadow-sm.h-100 .bi {
+      color: var(--main-accent) !important;
+    }
+
+    .p-4.bg-white.rounded.shadow-sm.h-100 li {
+      font-size: 1.08rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+
+    .p-4.bg-white.rounded.shadow-sm.h-100 li .bi {
+      font-size: 1.1em;
+      color: var(--main-accent);
+      margin-right: 0.3em;
+    }
+
+    /* Ajusta la franja de derechos reservados para mejor contraste */
+    .footer-clean .text-center.py-3 {
+      background: rgba(0, 0, 0, 0.18);
+      color: #fff;
+    }
+
+    body.light-mode .footer-clean .text-center.py-3 {
+      background: rgba(34, 48, 74, 0.08);
+      color: #232526;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Barra de navegación -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img class="logo" src="public/images/GRN_NEGRO.png" alt="Logo" width="50%" style="border-radius: 10px;" />
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-lg-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link fw-bold" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold" href="servicios.html">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold" href="nosotros.html">Sobre Nosotros</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold" href="contacto.php">Contacto</a></li>
+        </ul>
+        <!-- Botón de cambio de tema -->
+        <button class="theme-toggle-btn ms-3" id="themeToggleBtn" aria-label="Cambiar tema" style="color: black !important;">
+          <i class="bi bi-moon-stars-fill" id="themeIcon" style="color: black !important;"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section con Glassmorphism y Partículas -->
+  <section class="hero-section text-center text-lg-start">
+    <div id="particles-js"></div>
+    <div class="container">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-lg-7">
+          <div class="hero-glass" data-aos="fade-down">
+            <h1 class="display-4 mb-3">GRN Inversiones</h1>
+            <p class="lead mb-4">Expertos en <b>compra, venta y renta</b> de propiedades en Mérida, Yucatán y Quintana Roo.<br>
+              <span style="font-size:1.1em;">Tu patrimonio, nuestra prioridad.</span>
+            </p>
+            <a href="servicios.html" class="btn btn-glass btn-lg shadow-sm">Explorar Servicios</a>
+          </div>
+        </div>
+        <div class="col-lg-5 text-center" data-aos="zoom-in">
+          <div style="background:var(--main-accent);border-radius:28px;box-shadow:0 12px 48px rgba(0,0,0,0.22);display:inline-block;padding:12px;">
+            <img src="public/images/GRN_NEGRO.png" class="hero-img" alt="Sobre GRN Inversiones" style="background:transparent;box-shadow:none;border:none;max-width:80%;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Icons -->
+  <div class="container-fluid d-flex w-100 justify-content-center gap-3 mt-3 pb-2 social-icons" data-aos="fade-up">
+    <a href="https://wa.me/529981477653" target="_blank"><i class="bi bi-whatsapp fs-2"></i></a>
+    <a href="https://www.facebook.com/profile.php?id=100094634732652&mibextid=opq0tG" target="_blank"><i class="bi bi-facebook fs-2"></i></a>
+    <a href="https://www.linkedin.com/feed/update/urn:li:activity:7185799101056221184" target="_blank"><i class="bi bi-linkedin fs-2"></i></a>
+    <a href="https://www.youtube.com/@GRNInversionInmobiliaria/null" target="_blank"><i class="bi bi-youtube fs-2"></i></a>
+    <a href="https://www.instagram.com/grn_inversion_inmobiliaria?igsh=bHFmeWhsbG5yeDJo&utm_source=qr" target="_blank"><i class="bi bi-instagram fs-2"></i></a>
+  </div>
+
+  <!-- Servicios -->
+  <section class="container py-5">
+    <div class="row text-center mb-4">
+      <div class="col">
+        <h2 class="fw-bold" data-aos="fade-up" style="font-size:2.4rem;letter-spacing:1px;">Nuestros Servicios</h2>
+        <p class="text-muted" data-aos="fade-up" data-aos-delay="100" style="font-size:1.15rem;">Soluciones integrales para tu inversión inmobiliaria.</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="flip-left">
+        <div class="card service-card h-100 p-4">
+          <div class="mb-3"><i class="bi bi-house-door-fill"></i></div>
+          <h5 class="fw-bold mb-2">Compra</h5>
+          <p>Encuentre la propiedad ideal con asesoría personalizada y acompañamiento profesional en todo el proceso.</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="flip-up" data-aos-delay="100">
+        <div class="card service-card h-100 p-4">
+          <div class="mb-3"><i class="bi bi-cash-stack"></i></div>
+          <h5 class="fw-bold mb-2">Venta</h5>
+          <p>Venda su inmueble de forma eficiente y segura, conectando con compradores calificados.</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="flip-right" data-aos-delay="200">
+        <div class="card service-card h-100 p-4">
+          <div class="mb-3"><i class="bi bi-key-fill"></i></div>
+          <h5 class="fw-bold mb-2">Renta</h5>
+          <p>Acceda a opciones de renta en ubicaciones privilegiadas y con condiciones óptimas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Propiedades Destacadas -->
+  <section class="container py-5">
+    <div class="row text-center mb-4">
+      <div class="col">
+        <h2 class="fw-bold" data-aos="fade-up" style="font-size:2.4rem;letter-spacing:1px;">Propiedades Destacadas</h2>
+        <p class="text-muted" data-aos="fade-up" data-aos-delay="100" style="font-size:1.15rem;">Oportunidades únicas para invertir o vivir.</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up">
+        <div class="card property-card h-100">
+          <img src="public/images/img1.jpg" class="card-img-top" alt="Propiedad 1">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Residencia en Mérida</h5>
+            <p class="card-text text-muted">3 recámaras | 2 baños</p>
+            <p class="fw-bold text-primary">$2,500,000 MXN</p>
+            <a href="#" class="btn btn-glass btn-sm">Ver más</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card property-card h-100">
+          <img src="public/images/img2.webp" class="card-img-top" alt="Propiedad 2">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Departamento en Cancún</h5>
+            <p class="card-text text-muted">2 recámaras | 1 baño</p>
+            <p class="fw-bold text-success">$1,800,000 MXN</p>
+            <a href="#" class="btn btn-glass btn-sm">Ver más</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card property-card h-100">
+          <img src="public/images/img3.jpg" class="card-img-top" alt="Propiedad 3">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Casa en Playa del Carmen</h5>
+            <p class="card-text text-muted">4 recámaras | 3 baños</p>
+            <p class="fw-bold text-warning">$3,200,000 MXN</p>
+            <a href="#" class="btn btn-glass btn-sm">Ver más</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Asesoría y Red de Contactos -->
+  <section class="container py-5">
+    <div class="row g-4">
+      <div class="col-md-6" data-aos="fade-right">
+        <div class="p-4 bg-white rounded shadow-sm h-100"
+          style="background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);">
+          <h4 class="fw-bold mb-3">
+            <i class="bi bi-person-lines-fill" style="color:var(--main-accent);"></i> Asesoría Personalizada
+          </h4>
+          <ul class="list-unstyled">
+            <li><i class="bi bi-check2-circle"></i>Asesoría legal y financiera</li>
+            <li><i class="bi bi-check2-circle"></i>Visitas guiadas</li>
+            <li><i class="bi bi-check2-circle"></i>Soporte postventa</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6" data-aos="fade-left">
+        <div class="p-4 bg-white rounded shadow-sm h-100"
+          style="background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);">
+          <h4 class="fw-bold mb-3">
+            <i class="bi bi-people-fill" style="color:var(--main-accent);"></i> Red de Contactos
+          </h4>
+          <ul class="list-unstyled">
+            <li><i class="bi bi-check2-circle"></i>Proyectos exclusivos</li>
+            <li><i class="bi bi-check2-circle"></i>Financiamiento preferencial</li>
+            <li><i class="bi bi-check2-circle"></i>Oportunidades únicas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-clean mt-5">
+    <div class="container">
+      <div class="row pb-4">
+        <div class="col-md-4 mb-4">
+          <h5 class="fw-bold mb-3">GRN INVERSIONES</h5>
+          <p>Asesoría inmobiliaria, compra, venta y renta de inmuebles en Mérida, Yucatán y Quintana Roo.</p>
+          <div class="social-icons mt-3">
+            <a href="https://www.facebook.com/GRNInversiones" target="_blank"><i class="bi bi-facebook fs-4"></i></a>
+            <a href="https://www.instagram.com/grn_inversion_inmobiliaria" target="_blank"><i class="bi bi-instagram fs-4"></i></a>
+            <a href="https://www.linkedin.com/company/grn-inversiones" target="_blank"><i class="bi bi-linkedin fs-4"></i></a>
+            <a href="https://wa.me/529981477653" target="_blank"><i class="bi bi-whatsapp fs-4"></i></a>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h5 class="fw-bold mb-3">Contacto</h5>
+          <p><i class="bi bi-geo-alt-fill me-2"></i> Calle 42 #107, Centro, Mérida, Yuc.</p>
+          <p><i class="bi bi-envelope-fill me-2"></i> contacto@grninversiones.com</p>
+          <p><i class="bi bi-phone-fill me-2"></i> +52 998 147 7653</p>
+        </div>
+        <div class="col-md-4 mb-4">
+          <h5 class="fw-bold mb-3">Horario</h5>
+          <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+          <p>Sábado: 10:00 AM - 2:00 PM</p>
+          <p>Domingo: Cerrado</p>
+        </div>
+      </div>
+      <div class="text-center py-3" style="background:rgba(0,0,0,0.18);">
+        © 2024 GRN Inversiones. Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AOS Animations -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 900,
+      once: true
+    });
+  </script>
+  <!-- Script para alternar tema -->
+  <script>
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+
+    function setTheme(light) {
+      if (light) {
+        document.body.classList.add('light-mode');
+        themeIcon.classList.remove('bi-moon-stars-fill');
+        themeIcon.classList.add('bi-sun-fill');
+      } else {
+        document.body.classList.remove('light-mode');
+        themeIcon.classList.remove('bi-sun-fill');
+        themeIcon.classList.add('bi-moon-stars-fill');
+      }
+    }
+
+    // Cambia el color de las partículas según el modo
+    function setParticlesColor(light) {
+      // Destruye partículas previas si existen
+      if (window.pJSDom && window.pJSDom.length > 0) {
+        window.pJSDom[0].pJS.fn.vendors.destroypJS();
+        window.pJSDom = [];
+      }
+      particlesJS("particles-js", {
+        "particles": {
+          "number": { "value": 60, "density": { "enable": true, "value_area": 900 } },
+          "color": { "value": light ? "#22304a" : "#ffffff" },
+          "shape": { "type": "circle" },
+          "opacity": { "value": 0.35, "random": true },
+          "size": { "value": 12, "random": true },
+          "line_linked": { "enable": true, "distance": 160, "color": light ? "#22304a" : "#ffffff", "opacity": 0.22, "width": 2.5 },
+          "move": { "enable": true, "speed": 2.5, "direction": "none", "random": false, "straight": false, "out_mode": "out" }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": { "enable": true, "mode": "repulse" },
+            "onclick": { "enable": true, "mode": "push" }
+          },
+          "modes": {
+            "repulse": { "distance": 120, "duration": 0.4 },
+            "push": { "particles_nb": 4 }
+          }
+        },
+        "retina_detect": true
+      });
+    }
+
+    // Guardar preferencia en localStorage y cambiar tema/partículas
+    themeBtn.addEventListener('click', () => {
+      const isLight = !document.body.classList.contains('light-mode');
+      setTheme(isLight);
+      setParticlesColor(isLight);
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+
+    // Al cargar, aplicar preferencia y color de partículas
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('theme');
+      const isLight = saved === 'light';
+      setTheme(isLight);
+      setParticlesColor(isLight);
+    });
+  </script>
+</body>
+
+</html>
